@@ -110,6 +110,9 @@ module.exports = class Client extends FrameworkClient {
 	}
 
 	async login(token) {
+		this.rest.on('rateLimited', info => {
+			this.log.warn(`[Discord API RateLimit] Method: ${info.method} | Route: ${info.route} | Limit: ${info.limit} | Global: ${info.global}`);
+		});
 		const levels = ['error', 'info', 'warn'];
 		if (this.config.logs.level === 'debug') levels.push('query');
 

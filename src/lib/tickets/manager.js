@@ -826,7 +826,7 @@ module.exports = class TicketManager {
 		});
 		const getMessage = this.client.i18n.getLocale(ticket.guild.locale);
 
-		if (!(await isStaff(interaction.guild, interaction.user.id))) { // if user is not staff
+		if (!(await isStaff(interaction.guild, interaction.user.id))) {
 			return await interaction.reply({
 				embeds: [
 					new ExtendedEmbedBuilder({
@@ -841,12 +841,26 @@ module.exports = class TicketManager {
 			});
 		}
 
+		if (ticket.claimedById) {
+			return await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder({
+						iconURL: interaction.guild.iconURL(),
+						text: ticket.guild.footer,
+					})
+						.setColor(ticket.guild.errorColour)
+						.setTitle('❌ Error')
+						.setDescription('This ticket is already claimed.'),
+				],
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
 		await interaction.deferReply();
 
-		await Promise.all([
-			interaction.channel.permissionOverwrites.edit(interaction.user, { 'ViewChannel': true }, `Ticket claimed by ${interaction.user.tag}`),
-			...ticket.category.staffRoles.map(role => interaction.channel.permissionOverwrites.edit(role, { 'ViewChannel': false }, `Ticket claimed by ${interaction.user.tag}`)),
-			this.client.prisma.ticket.update({
+		const dbStart = Date.now();
+		try {
+			await this.client.prisma.ticket.update({
 				data: {
 					claimedBy: {
 						connectOrCreate: {
@@ -856,8 +870,52 @@ module.exports = class TicketManager {
 					},
 				},
 				where: { id: interaction.channel.id },
-			}),
-		]);
+			});
+			this.client.log.info(`[TicketManager] DB claim update took ${Date.now() - dbStart}ms`);
+		} catch (error) {
+			this.client.log.error(`[TicketManager] DB claim failed: ${error.message}`);
+			return interaction.editReply({ content: 'An error occurred while claiming the ticket in the database.' });
+		}
+
+		const newOverwrites = interaction.channel.permissionOverwrites.cache.map(overwrite => ({
+			id: overwrite.id,
+			allow: overwrite.allow.toArray(),
+			deny: overwrite.deny.toArray(),
+			type: overwrite.type,
+		}));
+
+		if (interaction.user.id !== ticket.createdById) {
+			const claimerIndex = newOverwrites.findIndex(o => o.id === interaction.user.id);
+			if (claimerIndex !== -1) {
+				if (!newOverwrites[claimerIndex].allow.includes('ViewChannel')) newOverwrites[claimerIndex].allow.push('ViewChannel');
+				newOverwrites[claimerIndex].deny = newOverwrites[claimerIndex].deny.filter(p => p !== 'ViewChannel');
+			} else {
+				newOverwrites.push({ id: interaction.user.id, allow: ['ViewChannel'], deny: [], type: 1 });
+			}
+		}
+
+		for (const roleId of ticket.category.staffRoles) {
+			const roleIndex = newOverwrites.findIndex(o => o.id === roleId);
+			if (roleIndex !== -1) {
+				newOverwrites[roleIndex].allow = newOverwrites[roleIndex].allow.filter(p => p !== 'ViewChannel');
+				if (!newOverwrites[roleIndex].deny.includes('ViewChannel')) newOverwrites[roleIndex].deny.push('ViewChannel');
+			} else {
+				newOverwrites.push({ id: roleId, allow: [], deny: ['ViewChannel'], type: 0 });
+			}
+		}
+
+		const discordStart = Date.now();
+		try {
+			await interaction.channel.permissionOverwrites.set(newOverwrites, `Ticket claimed by ${interaction.user.tag}`);
+			this.client.log.info(`[TicketManager] Discord overwrites claim update took ${Date.now() - discordStart}ms`);
+		} catch (error) {
+			this.client.log.error(`[TicketManager] Discord overwrites claim failed: ${error.message}`);
+			await this.client.prisma.ticket.update({
+				data: { claimedBy: { disconnect: true } },
+				where: { id: interaction.channel.id },
+			});
+			return interaction.editReply({ content: 'An error occurred while updating channel permissions. The claim has been reverted.' });
+		}
 
 		const openingMessage = await interaction.channel.messages.fetch(ticket.openingMessageId);
 
@@ -929,7 +987,7 @@ module.exports = class TicketManager {
 		});
 		const getMessage = this.client.i18n.getLocale(ticket.guild.locale);
 
-		if (!(await isStaff(interaction.guild, interaction.user.id))) { // if user is not staff
+		if (!(await isStaff(interaction.guild, interaction.user.id))) {
 			return await interaction.reply({
 				embeds: [
 					new ExtendedEmbedBuilder({
@@ -944,16 +1002,82 @@ module.exports = class TicketManager {
 			});
 		}
 
+		if (!ticket.claimedById) {
+			return await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder({
+						iconURL: interaction.guild.iconURL(),
+						text: ticket.guild.footer,
+					})
+						.setColor(ticket.guild.errorColour)
+						.setTitle('❌ Error')
+						.setDescription('This ticket is not currently claimed.'),
+				],
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
 		await interaction.deferReply();
 
-		await Promise.all([
-			interaction.channel.permissionOverwrites.delete(interaction.user, `Ticket released by ${interaction.user.tag}`),
-			...ticket.category.staffRoles.map(role => interaction.channel.permissionOverwrites.edit(role, { 'ViewChannel': true }, `Ticket released by ${interaction.user.tag}`)),
-			this.client.prisma.ticket.update({
+		const dbStart = Date.now();
+		try {
+			await this.client.prisma.ticket.update({
 				data: { claimedBy: { disconnect: true } },
 				where: { id: interaction.channel.id },
-			}),
-		]);
+			});
+			this.client.log.info(`[TicketManager] DB release update took ${Date.now() - dbStart}ms`);
+		} catch (error) {
+			this.client.log.error(`[TicketManager] DB release failed: ${error.message}`);
+			return interaction.editReply({ content: 'An error occurred while releasing the ticket in the database.' });
+		}
+
+		const newOverwrites = interaction.channel.permissionOverwrites.cache.map(overwrite => ({
+			id: overwrite.id,
+			allow: overwrite.allow.toArray(),
+			deny: overwrite.deny.toArray(),
+			type: overwrite.type,
+		}));
+
+		const claimedById = ticket.claimedById;
+		if (claimedById && claimedById !== ticket.createdById) {
+			const claimerIndex = newOverwrites.findIndex(o => o.id === claimedById);
+			if (claimerIndex !== -1) {
+				newOverwrites[claimerIndex].allow = newOverwrites[claimerIndex].allow.filter(p => p !== 'ViewChannel');
+				if (newOverwrites[claimerIndex].allow.length === 0 && newOverwrites[claimerIndex].deny.length === 0) {
+					newOverwrites.splice(claimerIndex, 1);
+				}
+			}
+		}
+
+		for (const roleId of ticket.category.staffRoles) {
+			const roleIndex = newOverwrites.findIndex(o => o.id === roleId);
+			if (roleIndex !== -1) {
+				newOverwrites[roleIndex].deny = newOverwrites[roleIndex].deny.filter(p => p !== 'ViewChannel');
+				if (!newOverwrites[roleIndex].allow.includes('ViewChannel')) newOverwrites[roleIndex].allow.push('ViewChannel');
+			} else {
+				newOverwrites.push({ id: roleId, allow: ['ViewChannel'], deny: [], type: 0 });
+			}
+		}
+
+		const discordStart = Date.now();
+		try {
+			await interaction.channel.permissionOverwrites.set(newOverwrites, `Ticket released by ${interaction.user.tag}`);
+			this.client.log.info(`[TicketManager] Discord overwrites release update took ${Date.now() - discordStart}ms`);
+		} catch (error) {
+			this.client.log.error(`[TicketManager] Discord overwrites release failed: ${error.message}`);
+			await this.client.prisma.ticket.update({
+				data: {
+					claimedBy: {
+						connectOrCreate: {
+							create: { id: claimedById },
+							where: { id: claimedById },
+						},
+					},
+				},
+				where: { id: interaction.channel.id },
+			});
+			return interaction.editReply({ content: 'An error occurred while updating channel permissions. The release has been reverted.' });
+		}
 
 		const openingMessage = await interaction.channel.messages.fetch(ticket.openingMessageId);
 
