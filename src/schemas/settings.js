@@ -10,6 +10,7 @@ module.exports = joi.object({
 	footer: joi.string().optional(),
 	id: joi.string().optional(),
 	logChannel: joi.string().optional(),
+	errorLogChannel: joi.string().optional(),
 	primaryColour: joi.string().optional(),
 	staleAfter: joi.number().min(60_000).optional(),
 	successColour: joi.string().optional(),

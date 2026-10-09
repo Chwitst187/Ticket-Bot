@@ -32,7 +32,30 @@ module.exports.get = fastify => ({
 				}
 			}
 
-			if (process.env.PUBLIC_BOT !== 'true' && client.application.botPublic) {
+			if (settings.errorLogChannel) {
+			const channel = guild.channels.cache.get(settings.errorLogChannel);
+			if (!channel) {
+				problems.push({ id: "errorLogChannelMissing" });
+			} else {
+				const permissions = guild.members.me.permissionsIn(channel);
+
+				if (!permissions.has(PermissionsBitField.Flags.SendMessages)) {
+					problems.push({
+						id: "errorLogChannelMissingPermission",
+						permission: "SendMessages",
+					});
+				}
+
+				if (!permissions.has(PermissionsBitField.Flags.EmbedLinks)) {
+					problems.push({
+						id: "errorLogChannelMissingPermission",
+						permission: "EmbedLinks",
+					});
+				}
+			}
+		}
+
+		if (process.env.PUBLIC_BOT !== 'true' && client.application.botPublic) {
 				problems.push({ id: 'botPublic' });
 			}
 		}

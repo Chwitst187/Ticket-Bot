@@ -33,13 +33,30 @@ module.exports.handleInteractionError = async event => {
 
 
 	let locale = null;
+	let errorLogChannel = null;
 	if (interaction.guild) {
-		locale = (await client.prisma.guild.findUnique({
-			select: { locale: true },
+		const g = await client.prisma.guild.findUnique({
+			select: { locale: true, errorLogChannel: true },
 			where: { id: interaction.guild.id },
-		})).locale;
+		});
+		if (g) {
+			locale = g.locale;
+			errorLogChannel = g.errorLogChannel;
+		}
 	}
 	const getMessage = client.i18n.getLocale(locale);
+
+	if (errorLogChannel && interaction.guild) {
+		const ch = interaction.guild.channels.cache.get(errorLogChannel);
+		if (ch) {
+			const errEmbed = new EmbedBuilder()
+				.setColor("Red")
+				.setTitle("Bot Error")
+				.setDescription("An error occurred during an interaction: \n" + codeBlock("js", String(error.stack || error.message).substring(0, 2000)))
+				.addFields([{ name: "Reference ID", value: codeBlock(ref) }]);
+			ch.send({ embeds: [errEmbed] }).catch(() => {});
+		}
+	}
 
 	const data = {
 		components: [],
