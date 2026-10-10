@@ -15,12 +15,12 @@
 		"lint": "eslint src scripts --fix",
 		"preinstall": "node scripts/preinstall",
 		"postinstall": "node scripts/postinstall",
-		"start": "concurrently \"node .\" \"npm run serve --prefix dashboard\"",
+		"start": "node .",
 		"studio": "npx prisma studio",
 		"test": "node scripts/check-i18n",
 		"__prepare": "husky install",
 		"prestart": "npm run pull",
-		"pull": "git pull && npm install"
+		"pull": "git pull && npm install && npm --prefix dashboard-src install && npm --prefix dashboard-src run build"
 	},
 	"commitlint": {
 		"extends": [
@@ -51,7 +51,7 @@
 		"node": ">=18"
 	},
 	"dependencies": {
-		"@discord-tickets/settings": "~2.5.4",
+		"@discord-tickets/settings": "file:dashboard-src",
 		"@eartharoid/dbf": "^0.4.2",
 		"@eartharoid/dtf": "^2.0.1",
 		"@eartharoid/i18n": "^1.2.1",
