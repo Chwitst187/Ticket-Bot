@@ -15,10 +15,12 @@
 		"lint": "eslint src scripts --fix",
 		"preinstall": "node scripts/preinstall",
 		"postinstall": "node scripts/postinstall",
-		"start": "node .",
+		"start": "concurrently \"node .\" \"npm run serve --prefix dashboard\"",
 		"studio": "npx prisma studio",
 		"test": "node scripts/check-i18n",
-		"__prepare": "husky install"
+		"__prepare": "husky install",
+		"prestart": "npm run pull",
+		"pull": "git pull && npm install && npm install --legacy-peer-deps --prefix dashboard"
 	},
 	"commitlint": {
 		"extends": [

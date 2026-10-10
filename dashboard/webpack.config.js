@@ -139,8 +139,9 @@ module.exports = {
     devServer: {
         compress: true,
         port: 5173,
+        host: '0.0.0.0',
         server: {
-            type: 'https',
+            type: process.env.USE_LOCAL_CERTS ? 'https' : 'http',
             options: process.env.USE_LOCAL_CERTS
                 ? {
                       ca: path.join(__dirname, '../../docker/certificates/root_ca.pem'),
@@ -153,7 +154,7 @@ module.exports = {
             directory: path.join(__dirname, '/public'),
             publicPath: process.env.WEBPACK_PUBLIC_PATH || '/assets/',
         },
-        allowedHosts: ['.pterodactyl.test'],
+        allowedHosts: 'all',
         headers: {
             'Access-Control-Allow-Origin': '*',
         },
