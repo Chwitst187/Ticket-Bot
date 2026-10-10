@@ -19,7 +19,38 @@ module.exports = class CloseButton extends Button {
 		/** @type {import("client")} */
 		const client = this.client;
 
-		if (id.accepted === undefined) {
+		if (id.force) {
+			const ticket = await client.tickets.getTicket(interaction.channel.id);
+			const staff = await isStaff(interaction.guild, interaction.user.id);
+			if (!staff) {
+				const getMessage = client.i18n.getLocale(ticket.guild.locale);
+				return await interaction.reply({
+					embeds: [
+						new ExtendedEmbedBuilder()
+							.setColor(ticket.guild.errorColour)
+							.setDescription(getMessage('ticket.close.forbidden.description')),
+					],
+					flags: MessageFlags.Ephemeral,
+				});
+			}
+			const getMessage = client.i18n.getLocale(ticket.guild.locale);
+			await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder()
+						.setColor(ticket.guild.successColour)
+						.setTitle(getMessage('commands.slash.force-close.closed_one.title') || 'Closed')
+						.setDescription(getMessage('commands.slash.force-close.closed_one.description', { ticket: ticket.id }) || 'The ticket will be closed shortly.'),
+				],
+			});
+			const stale = client.tickets.$stale.get(interaction.channel.id) || {};
+			setTimeout(async () => {
+				await client.tickets.finallyClose(interaction.channel.id, {
+					closedBy: interaction.user.id,
+					reason: stale.reason || null,
+				});
+			}, 3000);
+			return;
+		} else if (id.accepted === undefined) {
 			// the close button on the opening message, the same as using /close
 			await client.tickets.beforeRequestClose(interaction);
 		} else {

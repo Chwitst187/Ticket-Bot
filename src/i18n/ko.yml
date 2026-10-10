@@ -5,7 +5,10 @@ buttons:
   edit:
     emoji: ✏️
     text: 편집
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     emoji: ✖️
     text: 거절
   unclaim:

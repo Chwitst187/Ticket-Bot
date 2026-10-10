@@ -20,7 +20,10 @@ buttons:
   edit:
     emoji: ✏️
     text: 编辑
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     emoji: ✖️
     text: 拒绝
   transcript:

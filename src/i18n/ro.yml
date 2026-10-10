@@ -20,7 +20,10 @@ buttons:
   edit:
     emoji: ✏️
     text: Editează
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     emoji: ✖️
     text: Refuză
   unclaim:

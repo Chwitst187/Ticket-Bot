@@ -11,7 +11,10 @@ buttons:
     text: Lag ticket
   edit:
     text: Endre
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     text: Avslå
   unclaim:
     text: Avbyt overtak

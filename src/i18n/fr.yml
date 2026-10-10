@@ -11,7 +11,10 @@ buttons:
   close:
     text: Fermer
     emoji: ✖️
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     emoji: ✖️
     text: Rejeter
   confirm_open:

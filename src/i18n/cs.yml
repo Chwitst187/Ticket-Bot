@@ -20,7 +20,10 @@ buttons:
   confirm_open:
     emoji: ✅
     text: Vytvořit ticket
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     emoji: ✖️
     text: Zrušit
   unclaim:

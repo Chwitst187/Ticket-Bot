@@ -540,6 +540,11 @@ module.exports = class TicketManager {
 					.setStyle(ButtonStyle.Danger)
 					.setEmoji(getMessage('buttons.close.emoji'))
 					.setLabel(getMessage('buttons.close.text')),
+				new ButtonBuilder()
+					.setCustomId(JSON.stringify({ action: 'close', force: true }))
+					.setStyle(ButtonStyle.Danger)
+					.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
+					.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
 			);
 		}
 
@@ -943,14 +948,19 @@ module.exports = class TicketManager {
 			}
 
 			if (ticket.guild.closeButton) {
-				components.addComponents(
-					new ButtonBuilder()
-						.setCustomId(JSON.stringify({ action: 'close' }))
-						.setStyle(ButtonStyle.Danger)
-						.setEmoji(getMessage('buttons.close.emoji'))
-						.setLabel(getMessage('buttons.close.text')),
-				);
-			}
+			components.addComponents(
+				new ButtonBuilder()
+					.setCustomId(JSON.stringify({ action: 'close' }))
+					.setStyle(ButtonStyle.Danger)
+					.setEmoji(getMessage('buttons.close.emoji'))
+					.setLabel(getMessage('buttons.close.text')),
+				new ButtonBuilder()
+					.setCustomId(JSON.stringify({ action: 'close', force: true }))
+					.setStyle(ButtonStyle.Danger)
+					.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
+					.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
+			);
+		}
 
 			await openingMessage.edit({ components: [components] });
 		}
@@ -1105,14 +1115,19 @@ module.exports = class TicketManager {
 			}
 
 			if (ticket.guild.closeButton) {
-				components.addComponents(
-					new ButtonBuilder()
-						.setCustomId(JSON.stringify({ action: 'close' }))
-						.setStyle(ButtonStyle.Danger)
-						.setEmoji(getMessage('buttons.close.emoji'))
-						.setLabel(getMessage('buttons.close.text')),
-				);
-			}
+			components.addComponents(
+				new ButtonBuilder()
+					.setCustomId(JSON.stringify({ action: 'close' }))
+					.setStyle(ButtonStyle.Danger)
+					.setEmoji(getMessage('buttons.close.emoji'))
+					.setLabel(getMessage('buttons.close.text')),
+				new ButtonBuilder()
+					.setCustomId(JSON.stringify({ action: 'close', force: true }))
+					.setStyle(ButtonStyle.Danger)
+					.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
+					.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
+			);
+		}
 
 			await openingMessage.edit({ components: [components] });
 		}

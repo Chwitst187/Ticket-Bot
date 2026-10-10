@@ -11,7 +11,10 @@ buttons:
   confirm_open:
     emoji: ✅
     text: Skapa ett ärende
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     emoji: ✖️
     text: Neka
   unclaim:

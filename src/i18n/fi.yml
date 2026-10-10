@@ -135,7 +135,10 @@ buttons:
   edit:
     text: Muokkaa
     emoji: ✏️
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     text: Hylkää
     emoji: ✖️
   unclaim:

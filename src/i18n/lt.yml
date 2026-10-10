@@ -5,7 +5,10 @@ buttons:
   create:
     emoji: 🎫
     text: Sukurti bilietą
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     text: Atmesti
     emoji: ✖️
   accept_close_request:

@@ -267,7 +267,10 @@ buttons:
   edit:
     text: Wijzig
     emoji: ✏️
-  reject_close_request:
+  force_close:
+      emoji: ⚡
+      text: Instant Close
+
     emoji: ✖️
     text: Afwijzen
   close:
