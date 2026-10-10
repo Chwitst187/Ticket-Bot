@@ -1,3 +1,4 @@
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { Listener } = require('@eartharoid/dbf');
 const ms = require('ms');
 const sync = require('../../lib/sync');
@@ -123,5 +124,80 @@ module.exports = class extends Listener {
 			const staleInterval = ms('15m');
 			setInterval(() => handleStaleTickets(client, staleInterval), staleInterval);
 		}
+		// Auto-migrate existing tickets to include the instant close button
+		setTimeout(async () => {
+			client.log.info('Checking existing open tickets for missing instant close button...');
+			try {
+				const openTickets = await client.prisma.ticket.findMany({
+					where: { open: true },
+					include: { category: true, guild: true, _count: { select: { questionAnswers: true } } }
+				});
+
+				let updated = 0;
+				for (const ticket of openTickets) {
+					try {
+							const channel = await client.channels.fetch(ticket.id).catch(() => null);
+						if (!channel) continue;
+
+						const openingMessage = await channel.messages.fetch(ticket.openingMessageId).catch(() => null);
+						if (!openingMessage || openingMessage.components.length === 0) continue;
+
+						const hasInstantClose = openingMessage.components.some(row => 
+							row.components.some(btn => btn.customId && btn.customId.includes('"force":true'))
+						);
+						if (hasInstantClose) continue;
+
+						const getMessage = client.i18n.getLocale(ticket.guild.locale);
+						const components = new ActionRowBuilder();
+
+
+						if (ticket.topic || ticket._count.questionAnswers !== 0) {
+							components.addComponents(
+								new ButtonBuilder()
+									.setCustomId(JSON.stringify({ action: 'edit' }))
+									.setStyle(ButtonStyle.Secondary)
+									.setEmoji(getMessage('buttons.edit.emoji'))
+									.setLabel(getMessage('buttons.edit.text')),
+							);
+						}
+
+						if (ticket.guild.claimButton && ticket.category.claiming) {
+							const isClaimed = !!ticket.claimedById;
+							components.addComponents(
+								new ButtonBuilder()
+									.setCustomId(JSON.stringify({ action: isClaimed ? 'unclaim' : 'claim' }))
+									.setStyle(ButtonStyle.Secondary)
+									.setEmoji(getMessage(isClaimed ? 'buttons.unclaim.emoji' : 'buttons.claim.emoji'))
+									.setLabel(getMessage(isClaimed ? 'buttons.unclaim.text' : 'buttons.claim.text')),
+							);
+						}
+
+						if (ticket.guild.closeButton) {
+							components.addComponents(
+								new ButtonBuilder()
+									.setCustomId(JSON.stringify({ action: 'close' }))
+									.setStyle(ButtonStyle.Danger)
+									.setEmoji(getMessage('buttons.close.emoji'))
+									.setLabel(getMessage('buttons.close.text')),
+								new ButtonBuilder()
+									.setCustomId(JSON.stringify({ action: 'close', force: true }))
+									.setStyle(ButtonStyle.Danger)
+									.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
+									.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
+							);
+						}
+
+						await openingMessage.edit({ components: [components] });
+						updated++;
+					} catch (e) {
+						client.log.error('Failed to update ticket ' + ticket.id + ': ' + e.message);
+					}
+				}
+				if (updated > 0) client.log.info('Added instant close button to ' + updated + ' existing tickets.');
+			} catch (e) {
+				client.log.error('Migration failed: ' + e.message);
+			}
+		}, 5000);
+
 	}
 };
