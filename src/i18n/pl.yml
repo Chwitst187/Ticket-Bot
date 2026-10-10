@@ -24,9 +24,9 @@ buttons:
     emoji: ♻️
     text: Zwolnij
   force_close:
-      emoji: ⚡
-      text: Instant Close
-
+    emoji: ⚡
+    text: Instant Close
+  reject_close_request:
     emoji: ✖️
     text: Odrzuć
 commands:

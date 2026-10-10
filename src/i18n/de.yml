@@ -18,9 +18,9 @@ buttons:
     emoji: ✅
     text: Ticket erstellen
   force_close:
-      emoji: ⚡
-      text: Sofort schließen
-
+    emoji: ⚡
+    text: Sofort schließen
+  reject_close_request:
     emoji: ✖️
     text: Ablehnen
   edit:

@@ -21,9 +21,9 @@ buttons:
     emoji: ✏️
     text: Edit
   force_close:
-      emoji: ⚡
-      text: Instant Close
-
+    emoji: ⚡
+    text: Instant Close
+  reject_close_request:
     emoji: ✖️
     text: Từ chối tạo
   transcript:

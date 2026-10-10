@@ -12,9 +12,9 @@ buttons:
     emoji: ✅
     text: Skapa ett ärende
   force_close:
-      emoji: ⚡
-      text: Instant Close
-
+    emoji: ⚡
+    text: Instant Close
+  reject_close_request:
     emoji: ✖️
     text: Neka
   unclaim:

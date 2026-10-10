@@ -21,9 +21,9 @@ buttons:
     emoji: ✏️
     text: 编辑
   force_close:
-      emoji: ⚡
-      text: Instant Close
-
+    emoji: ⚡
+    text: Instant Close
+  reject_close_request:
     emoji: ✖️
     text: 拒绝
   transcript:

@@ -12,9 +12,9 @@ buttons:
   edit:
     text: Endre
   force_close:
-      emoji: ⚡
-      text: Instant Close
-
+    emoji: ⚡
+    text: Instant Close
+  reject_close_request:
     text: Avslå
   unclaim:
     text: Avbyt overtak

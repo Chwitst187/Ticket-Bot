@@ -242,9 +242,9 @@ buttons:
     text: สร้างห้องติดต่อ
     emoji: 🎫
   force_close:
-      emoji: ⚡
-      text: Instant Close
-
+    emoji: ⚡
+    text: Instant Close
+  reject_close_request:
     emoji: ✖️
     text: ปฏิเสธ
   confirm_open:
