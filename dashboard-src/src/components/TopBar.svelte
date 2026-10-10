@@ -15,7 +15,7 @@
 	};
 </script>
 
-<div class="my-8 rounded-xl bg-white p-4 shadow-sm dark:bg-slate-700">
+<div class="w-full bg-white p-4 shadow-sm dark:bg-gray-800">
 	<div class="grid grid-cols-1 gap-4 sm:mx-8 md:grid-cols-2">
 		<div>
 			<a href={base + '/settings'} class="flex justify-center md:justify-start">
@@ -29,7 +29,7 @@
 			>
 				<a
 					href={`/auth/logout`}
-					class="flex items-center justify-center hover:font-medium md:justify-end"
+					class="flex items-center justify-center hover:font-semibold md:justify-end"
 					title="Logout"
 				>
 					<img
@@ -42,13 +42,13 @@
 				<div class="ml-4">
 					{#if theme === 'dark'}
 						<i
-							class="fa-solid fa-moon cursor-pointer p-1 text-lg transition duration-300 hover:text-blurple"
+							class="fa-solid fa-moon cursor-pointer p-1 text-lg transition duration-300 hover:text-cyan-600"
 							title="Switch to light mode"
 							onclick={() => toggle()}
 						></i>
 					{:else}
 						<i
-							class="fa-solid fa-sun cursor-pointer p-1 text-lg transition duration-300 hover:text-blurple"
+							class="fa-solid fa-sun cursor-pointer p-1 text-lg transition duration-300 hover:text-cyan-600"
 							title="Switch to dark mode"
 							onclick={() => toggle()}
 						></i>
@@ -58,3 +58,4 @@
 		</div>
 	</div>
 </div>
+

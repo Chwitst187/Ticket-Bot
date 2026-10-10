@@ -58,10 +58,10 @@
 
 <div bind:this={list} class="list-group flex flex-col gap-2">
 	{#each qS.questions as q, i}
-		<div data-id={q.id} class="list-group-item rounded-xl bg-gray-100/50 p-4 dark:bg-slate-800/50">
+		<div data-id={q.id} class="list-group-item rounded-md bg-gray-100/50 p-4 dark:bg-gray-800/50">
 			<div class="w-full">
 				<div class="flex items-center gap-2 md:gap-4">
-					<i class="handle fa-solid fa-grip-vertical cursor-move text-gray-500 dark:text-slate-400"
+					<i class="handle fa-solid fa-grip-vertical cursor-move text-gray-500 dark:text-gray-400"
 					></i>
 
 					<div class="w-full">
@@ -81,7 +81,7 @@
 						</button>
 						<button
 							type="button"
-							class="flex w-full cursor-pointer select-none justify-between font-medium text-gray-500 transition duration-300 hover:text-blurple dark:text-slate-400 dark:hover:text-blurple"
+							class="flex w-full cursor-pointer select-none justify-between font-semibold text-gray-500 transition duration-300 hover:text-cyan-600 dark:text-gray-400 dark:hover:text-cyan-600"
 							onclick={() => (expanded = expanded === q.id ? null : q.id)}
 						>
 							<span class="text-sm"> Click to {expanded === q.id ? 'collapse' : 'expand'}</span>
@@ -97,11 +97,11 @@
 					<div class="my-4 text-sm">
 						<div class="grid grid-cols-1 gap-3">
 							<div>
-								<label class="font-medium">
+								<label class="font-semibold">
 									Type
 									<Required />
 									<i
-										class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+										class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 										title="What type of input should the question use?"
 									></i>
 									<select
@@ -139,3 +139,4 @@
 		</div>
 	{/each}
 </div>
+

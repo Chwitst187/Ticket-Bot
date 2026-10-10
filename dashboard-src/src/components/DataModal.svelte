@@ -17,12 +17,12 @@
 		transition:fly|global={{ y: 50 }}
 		>
 		<div
-			class="pointer-events-auto max-h-full w-full overflow-y-auto rounded-xl bg-white p-4 text-gray-800 shadow-sm dark:bg-slate-700 dark:text-slate-300"
+			class="pointer-events-auto max-h-full w-full overflow-y-auto rounded-md bg-white p-4 text-gray-800 shadow-sm dark:bg-gray-700 dark:text-gray-300"
 		>
 			<div class="m-2 flex flex-col gap-6 sm:m-4">
 				<div class="text-center">
 					<h2 class="text-2xl font-bold">Server data</h2>
-					<h4 class="text-lg font-semibold leading-tight text-gray-500 dark:text-slate-400">
+					<h4 class="text-lg font-semibold leading-tight text-gray-500 dark:text-gray-400">
 						Manage your server data
 					</h4>
 				</div>
@@ -31,7 +31,7 @@
 					<a
 						data-sveltekit-reload
 						href={`/api/admin/guilds/${$page.params.guild}/export`}
-						class="group rounded-xl bg-green-300 p-4 text-left transition duration-300 hover:bg-green-500 hover:text-white dark:bg-green-500/20 dark:hover:bg-green-500"
+						class="group rounded-md bg-green-300 p-4 text-left transition duration-300 hover:bg-green-500 hover:text-white dark:bg-green-500/20 dark:hover:bg-green-500"
 					>
 						<div class="flex items-center gap-2 md:gap-4">
 							<div class="flex w-full items-center gap-4">
@@ -44,7 +44,7 @@
 						</div>
 					</a>
 					<button
-						class="group rounded-xl bg-orange-300 p-4 text-left transition duration-300 hover:bg-orange-500 hover:text-white dark:bg-orange-500/20 dark:hover:bg-orange-500"
+						class="group rounded-md bg-orange-300 p-4 text-left transition duration-300 hover:bg-orange-500 hover:text-white dark:bg-orange-500/20 dark:hover:bg-orange-500"
 						onclick={() => modals.open(ImportModal, { guild })}
 					>
 						<div class="flex items-center gap-2 md:gap-4">
@@ -58,7 +58,7 @@
 						</div>
 					</button>
 					<button
-						class="group rounded-xl bg-red-300 p-4 text-left transition duration-300 hover:bg-red-500 hover:text-white dark:bg-red-500/20 dark:hover:bg-red-500"
+						class="group rounded-md bg-red-300 p-4 text-left transition duration-300 hover:bg-red-500 hover:text-white dark:bg-red-500/20 dark:hover:bg-red-500"
 						onclick={() => modals.open(ResetModal)}
 					>
 						<div class="flex items-center gap-2 md:gap-4">
@@ -85,3 +85,4 @@
 		</div>
 	</div>
 {/if}
+

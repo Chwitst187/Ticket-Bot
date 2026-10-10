@@ -177,10 +177,10 @@
 				/>
 			</div>
 			{#each shown as tag, i}
-				<div class="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-700">
+				<div class="rounded-md bg-white p-4 shadow-sm dark:bg-gray-700">
 					<span class="text-lg font-semibold">{tag.name}</span>
 					<p
-						class="cursor-pointer select-none text-gray-500 transition duration-300 hover:text-blurple dark:text-slate-400 dark:hover:text-blurple"
+						class="cursor-pointer select-none text-gray-500 transition duration-300 hover:text-cyan-600 dark:text-gray-400 dark:hover:text-cyan-600"
 						onclick={() => (expanded = expanded === tag.id ? null : tag.id)}
 					>
 						<i
@@ -199,7 +199,7 @@
 								<button
 									type="button"
 									disabled={loading}
-									class="flex-1 rounded-lg bg-red-300 p-2 px-5 font-medium transition duration-300 hover:bg-red-500 hover:text-white disabled:cursor-not-allowed dark:bg-red-500/75 dark:hover:bg-red-500 dark:hover:text-white"
+									class="flex-1 rounded-lg bg-red-300 p-2 px-5 font-semibold transition duration-300 hover:bg-red-500 hover:text-white disabled:cursor-not-allowed dark:bg-red-500/75 dark:hover:bg-red-500 dark:hover:text-white"
 									onclick={() => del(tag.id)}
 								>
 									{#if loading}
@@ -214,7 +214,7 @@
 									for={tag.id}
 									form={tag.id}
 									disabled={loading}
-									class="flex-1 rounded-lg bg-green-300 p-2 px-5 font-medium transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/75 dark:hover:bg-green-500 dark:hover:text-white"
+									class="flex-1 rounded-lg bg-green-300 p-2 px-5 font-semibold transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/75 dark:hover:bg-green-500 dark:hover:text-white"
 								>
 									{#if loading}
 										<i class="fa-solid fa-spinner animate-spin"></i>
@@ -229,7 +229,7 @@
 		</div>
 	</div>
 	<div class="w-full">
-		<div class="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-700">
+		<div class="rounded-md bg-white p-4 shadow-sm dark:bg-gray-700">
 			<h3 class="text-center text-xl font-bold">Create a tag</h3>
 			<form onsubmit={preventDefault(() => create())} class="my-4 text-lg">
 				<div class="grid grid-cols-1 gap-2">
@@ -237,7 +237,7 @@
 					<button
 						type="submit"
 						disabled={loading}
-						class="mt-4 rounded-lg bg-green-300 p-2 px-5 font-medium transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/75 dark:hover:bg-green-500 dark:hover:text-white"
+						class="mt-4 rounded-lg bg-green-300 p-2 px-5 font-semibold transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/75 dark:hover:bg-green-500 dark:hover:text-white"
 					>
 						{#if loading}
 							<i class="fa-solid fa-spinner animate-spin"></i>

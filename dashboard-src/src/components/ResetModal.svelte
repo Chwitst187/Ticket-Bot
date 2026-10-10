@@ -23,7 +23,7 @@
 
 {#snippet warning(message)}
 	<div
-		class="rounded-xl border-2 border-orange-600 bg-orange-400/20 p-2 font-medium text-orange-600 dark:border-orange-400 dark:bg-orange-500/20 dark:text-orange-400"
+		class="rounded-md border-2 border-orange-600 bg-orange-400/20 p-2 font-semibold text-orange-600 dark:border-orange-400 dark:bg-orange-500/20 dark:text-orange-400"
 	>
 		<div class="flex items-center gap-2">
 			<i class="fa-solid fa-triangle-exclamation mx-2 text-2xl"></i>
@@ -41,19 +41,19 @@
 		transition:fly|global={{ y: 50 }}
 	>
 		<div
-			class="pointer-events-auto max-h-full w-full overflow-y-auto rounded-xl bg-white p-4 text-slate-800 shadow-sm dark:bg-slate-700 dark:text-slate-300"
+			class="pointer-events-auto max-h-full w-full overflow-y-auto rounded-md bg-white p-4 text-gray-800 shadow-sm dark:bg-gray-700 dark:text-gray-300"
 		>
 			<div class="m-2 flex flex-col gap-6 sm:m-4">
 				<div class="text-center">
 					<h2 class="text-2xl font-bold">Reset</h2>
-					<!-- <h4 class="text-lg font-semibold leading-tight text-slate-500 dark:text-slate-400">
+					<!-- <h4 class="text-lg font-semibold leading-tight text-gray-500 dark:text-gray-400">
 						Manage your server data
 					</h4> -->
 				</div>
 
 				<a
 					data-sveltekit-reload
-					class="rounded-xl bg-red-500 p-4 px-8 font-medium text-white duration-300 hover:bg-red-500/25 hover:text-red-500"
+					class="rounded-md bg-red-500 p-4 px-8 font-semibold text-white duration-300 hover:bg-red-500/25 hover:text-red-500"
 					href={`/api/admin/guilds/${$page.params.guild}/export`}
 				>
 					<div class="flex items-center gap-8">
@@ -93,3 +93,4 @@
 		</div>
 	</div>
 {/if}
+

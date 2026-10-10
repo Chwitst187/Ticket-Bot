@@ -13,7 +13,7 @@
 </svelte:head>
 
 <div
-	class="absolute h-max min-h-screen w-full bg-dgrey-100 text-dgrey-600 dark:bg-dgrey-800 dark:text-dgrey-300"
+	class="absolute h-max min-h-screen w-full bg-gray-200 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
 >
 	<div class="container mx-auto mt-24 p-4 text-center sm:mt-48">
 		<h1 class="mb-16 text-2xl font-bold">
@@ -24,13 +24,13 @@
 				{@const slug = BigInt(guild.id).toString(36)}
 				<a href={`/${slug}`}>
 					<div
-						class="h-full w-full rounded-lg border-2 border-dgrey-400 bg-dgrey-300 p-4 shadow-black transition-all duration-300 hover:scale-105 hover:shadow-2xl dark:border-dgrey-700 dark:bg-dgrey-900 sm:w-48"
+						class="h-full w-full rounded-md bg-white p-4 shadow-md border border-gray-200 transition-colors duration-250 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 sm:w-64 border-l-4 border-l-cyan-500"
 					>
-						<div class="flex flex-row items-center gap-4 sm:flex-col">
+						<div class="flex flex-row items-center gap-4">
 							<img
 								src={guild.logo}
 								alt=""
-								class="h-12 w-12 rounded-full sm:mx-auto sm:h-24 sm:w-24"
+								class="h-12 w-12 rounded-full"
 							/>
 							<p class="font-semibold">{guild.name}</p>
 						</div>
@@ -39,9 +39,10 @@
 			{/each}
 		</div>
 		<div class="m-8 text-sm lg:my-24">
-			<a href="/auth/logout" class="transition-colors duration-300 hover:text-blurple"
+			<a href="/auth/logout" class="transition-colors duration-300 hover:text-cyan-600"
 				>{t('common:logout')}</a
 			>
 		</div>
 	</div>
 </div>
+

@@ -82,7 +82,7 @@
 
 {#snippet warning(message)}
 	<div
-		class="rounded-xl border-2 border-orange-600 bg-orange-400/20 p-2 font-medium text-orange-600 dark:border-orange-400 dark:bg-orange-500/20 dark:text-orange-400"
+		class="rounded-md border-2 border-orange-600 bg-orange-400/20 p-2 font-semibold text-orange-600 dark:border-orange-400 dark:bg-orange-500/20 dark:text-orange-400"
 	>
 		<div class="flex items-center gap-2">
 			<i class="fa-solid fa-triangle-exclamation mx-2 text-2xl"></i>
@@ -100,12 +100,12 @@
 		transition:fly|global={{ y: 50 }}
 	>
 		<div
-			class="pointer-events-auto max-h-full w-full overflow-y-auto rounded-xl bg-white p-4 text-slate-800 shadow-sm dark:bg-slate-700 dark:text-slate-300"
+			class="pointer-events-auto max-h-full w-full overflow-y-auto rounded-md bg-white p-4 text-gray-800 shadow-sm dark:bg-gray-700 dark:text-gray-300"
 		>
 			<div class="m-2 flex flex-col gap-6 sm:m-4">
 				<div class="text-center">
 					<h2 class="text-2xl font-bold">{submitted ? 'Importing' : 'Import'} data</h2>
-					<!-- <h4 class="text-lg font-semibold leading-tight text-slate-500 dark:text-slate-400">
+					<!-- <h4 class="text-lg font-semibold leading-tight text-gray-500 dark:text-gray-400">
 						Manage your server data
 					</h4> -->
 				</div>
@@ -113,7 +113,7 @@
 				{#if !file}
 					<a
 						data-sveltekit-reload
-						class="rounded-xl bg-red-500 p-4 px-8 font-medium text-white duration-300 hover:bg-red-500/25 hover:text-red-500"
+						class="rounded-md bg-red-500 p-4 px-8 font-semibold text-white duration-300 hover:bg-red-500/25 hover:text-red-500"
 						href={`/api/admin/guilds/${$page.params.guild}/export`}
 					>
 						<div class="flex items-center gap-8">
@@ -139,7 +139,7 @@
 							{/if}
 							<div
 								bind:this={logsContainer}
-								class="flex max-h-64 flex-col gap-1 overflow-y-auto text-wrap rounded-xl bg-gray-100 p-4 font-mono shadow-sm dark:bg-slate-800"
+								class="flex max-h-64 flex-col gap-1 overflow-y-auto text-wrap rounded-md bg-gray-100 p-4 font-mono shadow-sm dark:bg-gray-800"
 							>
 								{@html logs}
 							</div>
@@ -150,7 +150,7 @@
 								id="zip"
 								name="zip"
 								type="file"
-								class="dark:hover:bg-slate-800block w-full cursor-pointer rounded-lg border-2 border-dashed border-slate-300 bg-gray-50 bg-slate-100/50 p-4 text-sm text-gray-900 transition duration-300 file:mr-4 file:rounded-full file:border-0 file:bg-blurple file:p-2 file:px-4 file:text-white hover:border-slate-400 hover:bg-slate-200 focus:outline-none dark:border-slate-600 dark:bg-gray-700 dark:bg-slate-800/50 dark:text-gray-400 dark:placeholder-gray-400 dark:hover:border-slate-500"
+								class="dark:hover:bg-gray-800block w-full cursor-pointer rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 bg-gray-100/50 p-4 text-sm text-gray-900 transition duration-300 file:mr-4 file:rounded-full file:border-0 file:bg-cyan-600 hover:bg-cyan-500 file:p-2 file:px-4 file:text-white hover:border-gray-400 hover:bg-gray-200 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:bg-gray-800/50 dark:text-gray-400 dark:placeholder-gray-400 dark:hover:border-gray-500"
 							/>
 							{#if loading}
 								<Spinner></Spinner>
@@ -163,7 +163,7 @@
 										)}
 									{/if}
 									<div
-										class={`flex w-full items-center justify-around gap-4 rounded-xl border-2 bg-gray-100 p-4 shadow-sm dark:bg-slate-800 ${borderColour}`}
+										class={`flex w-full items-center justify-around gap-4 rounded-md border-2 bg-gray-100 p-4 shadow-sm dark:bg-gray-800 ${borderColour}`}
 									>
 										<img
 											src={iconUrl}
@@ -174,11 +174,11 @@
 											<span class="text-lg font-bold">
 												{comment?.originalGuildName || 'Unknown'}
 											</span>
-											<span class="flex items-center gap-4 text-gray-500 dark:text-slate-400">
+											<span class="flex items-center gap-4 text-gray-500 dark:text-gray-400">
 												<i class="fa-solid fa-clock"></i>
 												{exportedAt || 'Unknown'}
 											</span>
-											<span class="flex items-center gap-4 text-gray-500 dark:text-slate-400">
+											<span class="flex items-center gap-4 text-gray-500 dark:text-gray-400">
 												<i class="fa-solid fa-hard-drive"></i>
 												{size} MB
 											</span>
@@ -204,7 +204,7 @@
 									</div>
 									<i class="fa-solid fa-arrow-down-long text-xl font-bold"></i>
 									<div
-										class="flex w-full items-center justify-around gap-4 rounded-xl border-2 border-blurple bg-gray-100 p-4 shadow-sm dark:bg-slate-800"
+										class="flex w-full items-center justify-around gap-4 rounded-md border-2 border-blurple bg-gray-100 p-4 shadow-sm dark:bg-gray-800"
 									>
 										<img
 											src={guild.logo}
@@ -215,7 +215,7 @@
 											<span class="text-lg font-bold">
 												{guild.name}
 											</span>
-											<span class="flex items-center gap-4 text-gray-500 dark:text-slate-400">
+											<span class="flex items-center gap-4 text-gray-500 dark:text-gray-400">
 												<i class="fa-solid fa-code-branch"></i>
 												Version {client.version}
 											</span>
@@ -256,7 +256,7 @@
 					<div class="flex justify-center gap-8">
 						{#if submitted}
 							<button
-								class="rounded-lg bg-blurple p-2 px-5 font-semibold text-white duration-300 hover:bg-blurple/25"
+								class="rounded-lg bg-cyan-600 hover:bg-cyan-500 p-2 px-5 font-semibold text-white duration-300 hover:bg-cyan-600 hover:bg-cyan-500/25"
 								onclick={() => (window.location = window.location)}
 							>
 								Refresh
@@ -275,3 +275,4 @@
 		</div>
 	</div>
 {/if}
+

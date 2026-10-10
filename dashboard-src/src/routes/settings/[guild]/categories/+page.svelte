@@ -12,7 +12,7 @@
 	<div class="grid grid-cols-1 gap-4">
 		<a href="./categories/new">
 			<div
-				class="link rounded-xl bg-gray-100 p-4 text-center text-lg font-semibold shadow-sm dark:bg-slate-800"
+				class="link rounded-md bg-gray-100 p-4 text-center text-lg font-semibold shadow-sm dark:bg-gray-800"
 			>
 				<i class="fa-solid fa-circle-plus mr-2"></i><span>Create</span>
 			</div>
@@ -20,10 +20,10 @@
 		{#each categories as category}
 			<a href={`./categories/${category.id}`}>
 				<div
-					class="link group flex flex-col-reverse gap-1 rounded-xl bg-gray-100 p-4 shadow-sm dark:bg-slate-800 md:flex-row-reverse md:justify-between"
+					class="link group flex flex-col-reverse gap-1 rounded-md bg-gray-100 p-4 shadow-sm dark:bg-gray-800 md:flex-row-reverse md:justify-between"
 				>
 					<div
-						class="float-right min-w-max text-center text-sm text-gray-500 transition duration-300 group-hover:text-white dark:text-slate-400 dark:group-hover:text-white md:text-left"
+						class="float-right min-w-max text-center text-sm text-gray-500 transition duration-300 group-hover:text-white dark:text-gray-400 dark:group-hover:text-white md:text-left"
 					>
 						{#if browser}
 							<p>

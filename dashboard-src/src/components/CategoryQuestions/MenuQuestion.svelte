@@ -18,11 +18,11 @@
 </script>
 
 <div>
-	<label class="font-medium">
+	<label class="font-semibold">
 		Label
 		<Required />
 		<i
-			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 			title="The title of the question"
 		></i>
 		<input
@@ -35,10 +35,10 @@
 	</label>
 </div>
 <div>
-	<label class="font-medium">
+	<label class="font-semibold">
 		Maximum values
 		<i
-			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 			title="How many choices can be selected?"
 		></i>
 		<input
@@ -52,10 +52,10 @@
 	</label>
 </div>
 <div>
-	<label class="font-medium">
+	<label class="font-semibold">
 		Minimum values
 		<i
-			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 			title="The minimum number of select choices"
 		></i>
 		<input
@@ -70,16 +70,16 @@
 	</label>
 </div>
 <div>
-	<div class="font-medium">
+	<div class="font-semibold">
 		Options ({question.options.length}/25)
 		<Required />
 		<i
-			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+			class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 			title="The options that members can choose from"
 		></i>
 		<button
 			type="button"
-			class="rounded-lg px-2 font-medium text-yellow-500 transition duration-300 hover:text-yellow-300 disabled:cursor-not-allowed dark:text-yellow-500 dark:hover:text-yellow-500/50"
+			class="rounded-lg px-2 font-semibold text-yellow-500 transition duration-300 hover:text-yellow-300 disabled:cursor-not-allowed dark:text-yellow-500 dark:hover:text-yellow-500/50"
 			onclick={() => modals.open(OptionsModal, { id: question.id })}
 		>
 			<i class="fa-solid fa-pencil"></i>
@@ -96,10 +96,10 @@
 </div>
 <div>
 	<div>
-		<label class="font-medium">
+		<label class="font-semibold">
 			Placeholder
 			<i
-				class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+				class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 				title="The placeholder (label)"
 			></i>
 			<input
@@ -111,3 +111,4 @@
 		</label>
 	</div>
 </div>
+

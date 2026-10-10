@@ -8,7 +8,7 @@
 <div class="text-center">
 	<a
 		href="./"
-		class="link mb-4 inline-block rounded-xl bg-gray-50/75 p-2 px-4 font-medium text-gray-500 shadow-sm dark:bg-slate-800/75 dark:text-slate-400"
+		class="link mb-4 inline-block rounded-md bg-gray-50/75 p-2 px-4 font-semibold text-gray-500 shadow-sm dark:bg-gray-800/75 dark:text-gray-400"
 	>
 		<i class="fa-solid fa-arrow-left"></i>
 		{guild.name}

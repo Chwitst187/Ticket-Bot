@@ -83,7 +83,7 @@
 		<ErrorBox {error} />
 	{/if}
 
-	<div class="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-700">
+	<div class="rounded-md bg-white p-4 shadow-sm dark:bg-gray-700">
 		<div class="text-center">
 			{#if panel.channel !== 'new' && panel.type === 'MESSAGE'}
 				<p class="p-2 text-cyan-500">
@@ -103,32 +103,32 @@
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<div>
 					<label>
-						<span class="font-medium">Type</span>
+						<span class="font-semibold">Type</span>
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="How will members use the panel?"
 						></i>
 						<select class="input form-multiselect font-normal" required bind:value={panel.type}>
 							<option value="BUTTON" class="p-1" disabled={panel.categories.length > 5}>
-								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" default /> -->
+								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" default /> -->
 								Buttons
 							</option>
 							<option value="MENU" class="p-1">
-								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" /> -->
+								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" /> -->
 								Select menu (dropdown)
 							</option>
 							<!-- <option value="MESSAGE" class="p-1" disabled={panel.categories.length > 1}>
-								<i class="fa-solid fa-at text-gray-500 dark:text-slate-400" />
+								<i class="fa-solid fa-at text-gray-500 dark:text-gray-400" />
 								Message
 							</option> -->
 						</select>
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
-						<span class="font-medium">Channel</span>
+					<label class="font-semibold">
+						<span class="font-semibold">Channel</span>
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="The channel to send the panel message to"
 						></i>
 						<select required class="input form-multiselect font-normal" bind:value={panel.channel}>
@@ -137,7 +137,7 @@
 							{#each channels as channel}
 								{channel.id}
 								<option value={channel.id} class="p-1">
-									<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-slate-400" /> -->
+									<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-gray-400" /> -->
 									{channel.name}
 								</option>
 							{/each}
@@ -145,22 +145,22 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
-						<span class="font-medium">Categories</span>
+					<label class="font-semibold">
+						<span class="font-semibold">Categories</span>
 						<Required />
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="The category options to be available"
 						></i>
 						<MultiSelect
 							bind:selected={selectedCategories}
-							outerDivClass="text-base my-1 p-2 rounded-md border-transparent bg-gray-100 dark:bg-slate-800 font-normal shadow-sm transition-colors has-[:focus]:ring-2 has-[:focus]:ring-blurple"
+							outerDivClass="text-base my-1 p-2 rounded-md border-transparent bg-gray-100 dark:bg-gray-800 font-normal shadow-sm transition-colors has-[:focus]:ring-2 has-[:focus]:ring-blurple"
 							inputClass="p-0 rounded-md bg-transparent transition-colors border-0 focus:ring-0"
-							ulSelectedClass="bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-300"
-							liSelectedClass="bg-blurple text-white text-sm font-semibold font-mono"
-							ulOptionsClass="bg-white dark:bg-slate-900 p-2 max-h-48 overflow-y-auto"
+							ulSelectedClass="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300"
+							liSelectedClass="bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-semibold font-mono"
+							ulOptionsClass="bg-white dark:bg-gray-900 p-2 max-h-48 overflow-y-auto"
 							liOptionClass="rounded-md"
-							liActiveOptionClass="bg-blurple text-white"
+							liActiveOptionClass="bg-cyan-600 hover:bg-cyan-500 text-white"
 							liUserMsgClass="text-red-700 dark:text-red-500 bg-red-400/40 dark:bg-red-500/20"
 							liActiveUserMsgClass=""
 							maxSelectMsgClass="text-xs"
@@ -173,9 +173,9 @@
 				</div>
 				<div>
 					<label>
-						<span class="font-medium">Title</span>
+						<span class="font-semibold">Title</span>
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="The embed title"
 						></i>
 						<input type="text" class="input form-input" required bind:value={panel.title} />
@@ -183,9 +183,9 @@
 				</div>
 				<div>
 					<label>
-						<span class="font-medium">Large image</span>
+						<span class="font-semibold">Large image</span>
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Optional - the embed image"
 						></i>
 						<input type="url" class="input form-input" bind:value={panel.image} />
@@ -193,19 +193,19 @@
 				</div>
 				<div>
 					<label>
-						<span class="font-medium">Small image (thumbnail)</span>
+						<span class="font-semibold">Small image (thumbnail)</span>
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Optional - the embed thumbnail"
 						></i>
 						<input type="url" class="input form-input" bind:value={panel.thumbnail} />
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
-						<span class="font-medium">Description</span>
+					<label class="font-semibold">
+						<span class="font-semibold">Description</span>
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Optional - the embed description"
 						></i>
 						<textarea class="input form-input h-24" maxlength="4096" bind:value={panel.description}
@@ -216,7 +216,7 @@
 					<button
 						type="submit"
 						disabled={loading}
-						class="mt-4 rounded-lg bg-green-300 p-2 px-5 font-medium transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/50 dark:hover:bg-green-500 dark:hover:text-white"
+						class="mt-4 rounded-lg bg-green-300 p-2 px-5 font-semibold transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/50 dark:hover:bg-green-500 dark:hover:text-white"
 					>
 						{#if loading}
 							<i class="fa-solid fa-spinner animate-spin"></i>
@@ -228,7 +228,7 @@
 		</form>
 	</div>
 	<div class="mx-auto mt-8 max-w-lg text-center text-base">
-		<div class="rounded-xl border-2 border-cyan-500 bg-cyan-500/20 p-2">
+		<div class="rounded-md border-2 border-cyan-500 bg-cyan-500/20 p-2">
 			<i class="fa-solid fa-circle-info text-2xl text-cyan-500"></i>
 			<br />
 			Looking to edit or remove a panel? Just delete the message or channel in Discord.

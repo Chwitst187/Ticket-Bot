@@ -116,20 +116,20 @@
 	<form onsubmit={preventDefault(() => submit())} onchange={() => (modified = true)}>
 		<div class="my-4 grid grid-cols-1 gap-8">
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Auto close after
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="How long should the bot wait before closing (for close command and stale tickets)?"
 					></i>
 					<input type="text" class="input form-input" bind:value={settings.autoClose} />
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Auto tag channels
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="Which channels should the bot respond with tags in?"
 					></i>
 					<select class="input form-multiselect block font-normal" bind:value={autoTag}>
@@ -146,7 +146,7 @@
 						>
 							{#each channels as channel}
 								<option value={channel.id} class="m-1 rounded p-1">
-									<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-slate-400" /> -->
+									<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-gray-400" /> -->
 									{channel.name}
 								</option>
 							{/each}
@@ -155,10 +155,10 @@
 				</label>
 			</div>
 			<div>
-				<label for="archive" class="font-medium">
+				<label for="archive" class="font-semibold">
 					Archive
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="Save messages sent in tickets for future use?"
 					></i>
 					<input
@@ -171,10 +171,10 @@
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Blocklist
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="Which roles should the bot ignore?"
 					></i>
 					<select
@@ -184,7 +184,7 @@
 					>
 						{#each roles as role}
 							<option value={role.id} class="m-1 rounded p-1" style={role._style}>
-								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" style={role._style} /> -->
+								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" style={role._style} /> -->
 								{role.unicodeEmoji || ''}
 								{role.name}
 							</option>
@@ -193,18 +193,18 @@
 				</label>
 			</div>
 			<div>
-				<div class="font-medium">
+				<div class="font-semibold">
 					Buttons
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="Which buttons should be enabled (if the feature is enabled in the category)?"
 					></i>
 					<div class="mx-4">
 						<div>
-							<label for="claimButton" class="text-base font-medium">
+							<label for="claimButton" class="text-base font-semibold">
 								Claim
 								<i
-									class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+									class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 									title="Add a claim/unclaim button to the opening message (if enabled in category)?"
 								></i>
 								<input
@@ -217,10 +217,10 @@
 							</label>
 						</div>
 						<div>
-							<label for="closeButton" class="text-base font-medium">
+							<label for="closeButton" class="text-base font-semibold">
 								Close
 								<i
-									class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+									class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 									title="Add a close button to the opening message?"
 								></i>
 								<input
@@ -236,36 +236,36 @@
 				</div>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Error colour
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="What colour should error embeds be?"
 					></i>
 					<input type="text" class="input form-input" bind:value={settings.errorColour} />
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Footer
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="What text should be at the bottom of embeds?"
 					></i>
 					<input type="text" class="input form-input" bind:value={settings.footer} />
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Locale
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="Which language should the bot respond in?"
 					></i>
 					<select class="input form-multiselect" bind:value={settings.locale}>
 						{#each locales as locale}
 							<option value={locale} class="p-1">
-								<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-slate-400" /> -->
+								<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-gray-400" /> -->
 								{locale}
 							</option>
 						{/each}
@@ -273,10 +273,10 @@
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Log channel
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="Which channel should logs be sent to?"
 					></i>
 					<select class="input form-multiselect" bind:value={settings.logChannel}>
@@ -284,7 +284,7 @@
 						<hr />
 						{#each channels as channel}
 							<option value={channel.id} class="p-1">
-								<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-slate-400" /> -->
+								<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-gray-400" /> -->
 								{channel.name}
 							</option>
 						{/each}
@@ -292,10 +292,10 @@
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Error log channel
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="Which channel should error logs be sent to?"
 					></i>
 					<select class="input form-multiselect" bind:value={settings.errorLogChannel}>
@@ -310,45 +310,45 @@
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Primary colour
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="What colour should normal embeds be?"
 					></i>
 					<input type="text" class="input form-input" bind:value={settings.primaryColour} />
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Stale after
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="When should the bot remind members/staff about messages with no reply?"
 					></i>
 					<input type="text" class="input form-input" bind:value={settings.staleAfter} />
 				</label>
 			</div>
 			<div>
-				<label class="font-medium">
+				<label class="font-semibold">
 					Success colour
 					<i
-						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+						class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 						title="What colour should success embeds be?"
 					></i>
 					<input type="text" class="input form-input" bind:value={settings.successColour} />
 				</label>
 			</div>
 			<div>
-				<div class="grid grid-cols-1 gap-2 font-medium">
+				<div class="grid grid-cols-1 gap-2 font-semibold">
 					<div>
 						Working hours
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="When can your members expect staff to be available?"
 						></i>
 						<p
-							class="cursor-pointer select-none text-gray-500 transition duration-300 hover:text-blurple dark:text-slate-400 dark:hover:text-blurple"
+							class="cursor-pointer select-none text-gray-500 transition duration-300 hover:text-cyan-600 dark:text-gray-400 dark:hover:text-cyan-600"
 							onclick={() => (expanded.workingHours = !expanded.workingHours)}
 						>
 							<i
@@ -389,13 +389,13 @@
 										<div class="flex items-center">
 											<input
 												type="time"
-												class="form-input m-2 grow rounded-md border-transparent bg-gray-100 text-center font-normal shadow-sm focus:border-2 focus:border-blurple focus:bg-white focus:ring-0 dark:bg-slate-800"
+												class="form-input m-2 grow rounded-md border-transparent bg-gray-100 text-center font-normal shadow-sm focus:border-2 focus:border-blurple focus:bg-white focus:ring-0 dark:bg-gray-800"
 												bind:value={settings.workingHours[index + 1][0]}
 											/>
 											<i class="fa-solid fa-arrow-right-long"></i>
 											<input
 												type="time"
-												class="form-input m-2 grow rounded-md border-transparent bg-gray-100 text-center font-normal shadow-sm focus:border-2 focus:border-blurple focus:bg-white focus:ring-0 dark:bg-slate-800"
+												class="form-input m-2 grow rounded-md border-transparent bg-gray-100 text-center font-normal shadow-sm focus:border-2 focus:border-blurple focus:bg-white focus:ring-0 dark:bg-gray-800"
 												bind:value={settings.workingHours[index + 1][1]}
 											/>
 										</div>
@@ -410,7 +410,7 @@
 		<button
 			type="submit"
 			disabled={loading}
-			class="float-right mt-4 rounded-lg bg-green-300 p-2 px-5 font-medium transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/50 dark:hover:bg-green-500 dark:hover:text-white"
+			class="float-right mt-4 rounded-lg bg-green-300 p-2 px-5 font-semibold transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/50 dark:hover:bg-green-500 dark:hover:text-white"
 		>
 			{#if loading}
 				<i class="fa-solid fa-spinner animate-spin"></i>

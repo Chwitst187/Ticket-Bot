@@ -34,7 +34,7 @@
 					{#each good as guild}
 						<a href={`${base}/settings/${guild.id}`}>
 							<div
-								class="link flex items-center gap-4 rounded-xl bg-gray-100 p-4 text-lg font-semibold shadow-sm dark:bg-slate-800"
+								class="link flex items-center gap-4 rounded-md bg-white p-4 text-lg font-semibold shadow-md border-l-4 border-cyan-500 transition-colors duration-250 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600"
 							>
 								<img src={guild.logo} alt="" class="h-12 rounded-full" />
 								<span>{guild.name}</span>
@@ -42,7 +42,7 @@
 						</a>
 					{/each}
 					{#if bad.length > 0}
-						<hr class="mt-4 border-white dark:border-slate-700" />
+						<hr class="mt-4 border-white dark:border-gray-700" />
 					{/if}
 				{/if}
 			</div>
@@ -57,7 +57,7 @@
 				{#each bad as guild}
 					<a href={`/invite?guild=${guild.id}`}>
 						<div
-							class="link flex h-full items-center gap-4 rounded-xl bg-gray-100 p-3 font-semibold shadow-sm dark:bg-slate-800"
+							class="link flex h-full items-center gap-4 rounded-md bg-white p-3 font-semibold shadow-sm border border-gray-200 transition-colors duration-250 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"
 						>
 							<img src={guild.logo} alt="" class="h-10 rounded-full" />
 							<span>{guild.name}</span>
@@ -66,7 +66,7 @@
 				{/each}
 				<a href={'/invite'}>
 					<div
-						class="link flex h-full items-center gap-4 rounded-xl bg-gray-100 p-3 text-lg font-semibold shadow-sm dark:bg-slate-800"
+						class="link flex h-full items-center gap-4 rounded-md bg-white p-3 text-lg font-semibold shadow-sm border border-dashed border-gray-300 transition-colors duration-250 hover:bg-gray-50 hover:border-gray-400 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-500 text-cyan-600"
 					>
 						<div class="w-full text-center">
 							<i class="fa-solid fa-circle-plus mr-2"></i><span>Add</span>
@@ -77,13 +77,13 @@
 		</div>
 	</div>
 	<div>
-		<div class="mb-4 rounded-xl bg-white p-4 shadow-sm dark:bg-slate-700">
+		<div class="mb-4 rounded-md bg-white p-0 shadow-md overflow-hidden dark:bg-gray-700">
 			<div
-				class="flex items-center justify-center gap-4 rounded-xl bg-gray-100 p-4 font-semibold shadow-sm dark:bg-slate-800"
+				class="flex items-center justify-center gap-4 bg-gray-50 p-4 font-semibold border-b border-gray-200 dark:bg-gray-800 dark:border-gray-600"
 			>
 				<img src={client.avatar} alt="" class="h-12 rounded-full" />
 				<span class="text-2xl font-bold">
-					{client.username}<span class="text-gray-500 dark:text-slate-400"
+					{client.username}<span class="text-gray-500 dark:text-gray-400"
 						>#{client.discriminator}</span
 					>
 				</span>
@@ -91,52 +91,52 @@
 			<div class="m-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
 				<div>
 					<h6 class="font-semibold">Activated users</h6>
-					<p class="text-gray-500 dark:text-slate-400">{formatter.format(client.stats.activatedUsers)}</p>
+					<p class="text-gray-500 dark:text-gray-400">{formatter.format(client.stats.activatedUsers)}</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Archived messages</h6>
-					<p class="text-gray-500 dark:text-slate-400">{formatter.format(client.stats.archivedMessages)}</p>
+					<p class="text-gray-500 dark:text-gray-400">{formatter.format(client.stats.archivedMessages)}</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Resolution time</h6>
-					<p class="text-gray-500 dark:text-slate-400">{client.stats.avgResolutionTime}</p>
+					<p class="text-gray-500 dark:text-gray-400">{client.stats.avgResolutionTime}</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Response time</h6>
-					<p class="text-gray-500 dark:text-slate-400">{client.stats.avgResponseTime}</p>
+					<p class="text-gray-500 dark:text-gray-400">{client.stats.avgResponseTime}</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Categories</h6>
-					<p class="text-gray-500 dark:text-slate-400">{formatter.format(client.stats.categories)}</p>
+					<p class="text-gray-500 dark:text-gray-400">{formatter.format(client.stats.categories)}</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Guilds</h6>
-					<p class="text-gray-500 dark:text-slate-400">{formatter.format(client.stats.guilds)}</p>
+					<p class="text-gray-500 dark:text-gray-400">{formatter.format(client.stats.guilds)}</p>
 				</div>
 				<!-- <div>
 					<h6 class="font-semibold">Avg. members</h6>
-					<p class="text-gray-500 dark:text-slate-400">
+					<p class="text-gray-500 dark:text-gray-400">
 						{Math.floor(client.stats.members / client.stats.guilds)}
 					</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Total members</h6>
-					<p class="text-gray-500 dark:text-slate-400">{client.stats.members}</p>
+					<p class="text-gray-500 dark:text-gray-400">{client.stats.members}</p>
 				</div> -->
 				<div>
 					<h6 class="font-semibold">Members (avg)</h6>
-					<p class="text-gray-500 dark:text-slate-400">
+					<p class="text-gray-500 dark:text-gray-400">
 						{formatter.format(client.stats.members)}
 						({formatter.format(Math.floor(client.stats.members / client.stats.guilds))})
 					</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Tags</h6>
-					<p class="text-gray-500 dark:text-slate-400">{formatter.format(client.stats.tags)}</p>
+					<p class="text-gray-500 dark:text-gray-400">{formatter.format(client.stats.tags)}</p>
 				</div>
 				<div>
 					<h6 class="font-semibold">Tickets</h6>
-					<p class="text-gray-500 dark:text-slate-400">{formatter.format(client.stats.tickets)}</p>
+					<p class="text-gray-500 dark:text-gray-400">{formatter.format(client.stats.tickets)}</p>
 				</div>
 			</div>
 		</div>
@@ -144,11 +144,11 @@
 </div>
 
 <div class="mx-auto my-8 max-w-3xl">
-	<hr class="mx-24 my-8 border-white dark:border-slate-700" />
+	<hr class="mx-24 my-8 border-white dark:border-gray-700" />
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 		<a href="https://discordtickets.app" target="_blank" rel="noopener noreferrer">
 			<div
-				class="link flex items-center gap-4 rounded-xl bg-gray-50/75 p-4 shadow-sm dark:bg-slate-800/75"
+				class="link flex items-center gap-4 rounded-md bg-white p-4 shadow-md transition-colors duration-250 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600"
 			>
 				<i class="fa-solid fa-book text-5xl"></i>
 				<div>
@@ -159,7 +159,7 @@
 		</a>
 		<a href="https://lnk.earth/discord" target="_blank" rel="noopener noreferrer">
 			<div
-				class="link flex items-center gap-4 rounded-xl bg-gray-50/75 p-4 shadow-sm dark:bg-slate-800/75"
+				class="link flex items-center gap-4 rounded-md bg-white p-4 shadow-md transition-colors duration-250 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600"
 			>
 				<i class="fa-solid fa-circle-question text-5xl"></i>
 				<div>
@@ -170,3 +170,4 @@
 		</a>
 	</div>
 </div>
+

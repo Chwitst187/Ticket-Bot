@@ -180,7 +180,7 @@
 	</p>
 </div>
 <h1 class="m-4 text-center text-4xl font-bold">Categories</h1>
-<h2 class="m-4 text-center text-2xl font-semibold text-gray-500 dark:text-slate-400">
+<h2 class="m-4 text-center text-2xl font-semibold text-gray-500 dark:text-gray-400">
 	{emoji.get(category.emoji) ?? ''}
 	{category.name || 'New category'}
 </h2>
@@ -192,24 +192,24 @@
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-12">
 			<div class="grid grid-cols-1 gap-8">
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Name
 						<Required />
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="The name of the category"
 						></i>
 						<input type="text" class="input form-input" required bind:value={category.name} />
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Channel name
 						{#if category.id}
 							<Required />
 						{/if}
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="The name of ticket channels"
 						></i>
 						<input
@@ -223,9 +223,9 @@
 					{#if category.channelName}
 						<p class="mb-1 mt-2 text-sm font-semibold">Preview</p>
 						<div
-							class="block w-full break-words rounded-md bg-blurple/20 p-3 font-mono text-sm shadow-sm dark:bg-blurple/20"
+							class="block w-full break-words rounded-md bg-cyan-600 hover:bg-cyan-500/20 p-3 font-mono text-sm shadow-sm dark:bg-cyan-600 hover:bg-cyan-500/20"
 						>
-							<i class="fa-solid fa-hashtag text-gray-500 dark:text-slate-400"></i>
+							<i class="fa-solid fa-hashtag text-gray-500 dark:text-gray-400"></i>
 							<span class="marked">
 								{@html marked
 									.parse(category.channelName.replace(/\n/g, '\n\n'))
@@ -237,10 +237,10 @@
 					{/if}
 				</div>
 				<div>
-					<label for="claiming" class="font-medium">
+					<label for="claiming" class="font-semibold">
 						Claiming
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Allow staff to claim tickets?"
 						></i>
 						<input
@@ -253,21 +253,21 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Cooldown
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="How long should members have to wait before creating another ticket?"
 						></i>
 						<input type="text" class="input form-input" bind:value={category.cooldown} />
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Description
 						<Required />
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="What is this category for?"
 						></i>
 						<input
@@ -279,11 +279,11 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Discord category
 						<Required />
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Which category channel should ticket channels be created under?"
 						></i>
 						<select class="input form-multiselect" required bind:value={category.discordCategory}>
@@ -293,7 +293,7 @@
 							{/if}
 							{#each channels as channel}
 								<option value={channel.id} class="p-1">
-									<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-slate-400" /> -->
+									<!-- <i class="fa-solid fa-hashtag text-gray-500 dark:text-gray-400" /> -->
 									{channel.name}
 								</option>
 							{/each}
@@ -301,11 +301,11 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Emoji
 						<Required />
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Emoji used for buttons & dropdowns"
 						></i>
 						<span class="text-2xl">{emoji.get(category.emoji) ?? ''}</span>
@@ -313,10 +313,10 @@
 					</label>
 				</div>
 				<div>
-					<label for="enableFeedback" class="font-medium">
+					<label for="enableFeedback" class="font-semibold">
 						Feedback
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Gather feedback from members?"
 						></i>
 						<input
@@ -329,20 +329,20 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Image
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="A link to an image to be sent with the opening message."
 						></i>
 						<input type="url" class="input form-input" bind:value={category.image} />
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Member limit
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="How many tickets in this category can each member have open?"
 						></i>
 						<input
@@ -355,11 +355,11 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Opening message
 						<Required />
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Content to be sent in the opening message of each ticket."
 						></i>
 						<textarea
@@ -413,7 +413,7 @@
 											author-name={data.user.username}
 											image={category.image}
 										>
-											<discord-embed-description slot="description" class="break-words prose prose-slate prose-sm dark:prose-invert prose-a:text-blurple">
+											<discord-embed-description slot="description" class="break-words prose prose-slate prose-sm dark:prose-invert prose-a:text-cyan-600">
 												{@html marked
 													.parse(category.openingMessage)
 													.replace(
@@ -459,10 +459,10 @@
 					{/key}
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Ping roles
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Roles that should be pinged upon ticket creation."
 						></i>
 						<select
@@ -472,7 +472,7 @@
 						>
 							{#each roles as role}
 								<option value={role.id} class="m-1 rounded p-1" style={role._style}>
-									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" style={role._style} /> -->
+									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" style={role._style} /> -->
 									{role.unicodeEmoji || ''}
 									{role.name}
 								</option>
@@ -481,20 +481,20 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Slow mode
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Should slow mode be enabled?"
 						></i>
 						<select class="input form-multiselect font-normal" bind:value={category.ratelimit}>
 							<option value={null} class="p-1">
-								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" /> -->
+								<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" /> -->
 								Off
 							</option>
 							{#each slowmodes as slowmode}
 								<option value={ms(slowmode) / 1000} class="p-1">
-									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" /> -->
+									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" /> -->
 									{slowmode}
 								</option>
 							{/each}
@@ -502,10 +502,10 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Required roles
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Roles that a user needs to create a ticket."
 						></i>
 						<select
@@ -515,7 +515,7 @@
 						>
 							{#each roles as role}
 								<option value={role.id} class="m-1 rounded p-1" style={role._style}>
-									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" style={role._style} /> -->
+									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" style={role._style} /> -->
 									{role.unicodeEmoji || ''}
 									{role.name}
 								</option>
@@ -524,10 +524,10 @@
 					</label>
 				</div>
 				<div>
-					<label for="requireTopic" class="font-medium">
+					<label for="requireTopic" class="font-semibold">
 						Require topic
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Require a topic before ticket creation?"
 						></i>
 						<input
@@ -541,11 +541,11 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Staff roles
 						<Required />
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="Roles that will be able to view tickets."
 						></i>
 						<select
@@ -556,7 +556,7 @@
 						>
 							{#each roles as role}
 								<option value={role.id} class="m-1 rounded p-1" style={role._style}>
-									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" style={role._style} /> -->
+									<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" style={role._style} /> -->
 									{role.unicodeEmoji || ''}
 									{role.name}
 								</option>
@@ -565,10 +565,10 @@
 					</label>
 				</div>
 				<div>
-					<label class="font-medium">
+					<label class="font-semibold">
 						Total limit
 						<i
-							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+							class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 							title="The total number of tickets that can be open at once."
 						></i>
 						<input
@@ -582,18 +582,18 @@
 				</div>
 			</div>
 			<div>
-				<div class="rounded-xl bg-white p-4 shadow-sm dark:bg-slate-700">
+				<div class="rounded-md bg-white p-4 shadow-sm dark:bg-gray-700">
 					<div class="flex flex-col gap-4">
 						<div class="text-center">
 							<h3 class="text-xl font-bold">Questions</h3>
-							<p class="text-gray-500 dark:text-slate-400">{qS.questions.length}/5</p>
+							<p class="text-gray-500 dark:text-gray-400">{qS.questions.length}/5</p>
 						</div>
 						{#if qS.questions.length > 0}
 							<div>
-								<label class="font-medium">
+								<label class="font-semibold">
 									Custom topic
 									<i
-										class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-slate-400"
+										class="fa-solid fa-circle-question cursor-help text-gray-500 dark:text-gray-400"
 										title="Which question's value should be used as the ticket topic?"
 									></i>
 									<select
@@ -601,13 +601,13 @@
 										bind:value={category.customTopic}
 									>
 										<option value={null} class="p-1">
-											<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" /> -->
+											<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" /> -->
 											None
 										</option>
 										<hr />
 										{#each qS.questions as q}
 											<option value={q.id} class="p-1">
-												<!-- <i class="fa-solid fa-at text-gray-500 dark:text-slate-400" /> -->
+												<!-- <i class="fa-solid fa-at text-gray-500 dark:text-gray-400" /> -->
 												{q.label}
 											</option>
 										{/each}
@@ -622,7 +622,7 @@
 							<div class="text-center">
 								<button
 									type="button"
-									class="rounded-lg p-2 px-5 font-medium text-green-500 transition duration-300 hover:text-green-300 disabled:cursor-not-allowed dark:text-green-500 dark:hover:text-green-500/50"
+									class="rounded-lg p-2 px-5 font-semibold text-green-500 transition duration-300 hover:text-green-300 disabled:cursor-not-allowed dark:text-green-500 dark:hover:text-green-500/50"
 									onclick={() => {
 										qS.questions.push({
 											id: uuidv4(),
@@ -652,7 +652,7 @@
 						<button
 							type="button"
 							disabled={loadingDelete}
-							class="mt-4 rounded-lg bg-red-300 p-2 px-5 font-medium transition duration-300 hover:bg-red-500 hover:text-white disabled:cursor-not-allowed dark:bg-red-500/50 dark:hover:bg-red-500 dark:hover:text-white"
+							class="mt-4 rounded-lg bg-red-300 p-2 px-5 font-semibold transition duration-300 hover:bg-red-500 hover:text-white disabled:cursor-not-allowed dark:bg-red-500/50 dark:hover:bg-red-500 dark:hover:text-white"
 							onclick={del}
 						>
 							{#if loadingDelete}
@@ -666,7 +666,7 @@
 					<button
 						type="submit"
 						disabled={loadingSubmit}
-						class="mt-4 rounded-lg bg-green-300 p-2 px-5 font-medium transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/50 dark:hover:bg-green-500 dark:hover:text-white"
+						class="mt-4 rounded-lg bg-green-300 p-2 px-5 font-semibold transition duration-300 hover:bg-green-500 hover:text-white disabled:cursor-not-allowed dark:bg-green-500/50 dark:hover:bg-green-500 dark:hover:text-white"
 					>
 						{#if loadingSubmit}
 							<i class="fa-solid fa-spinner animate-spin"></i>

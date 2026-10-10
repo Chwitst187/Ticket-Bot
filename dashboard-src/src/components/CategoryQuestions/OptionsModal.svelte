@@ -53,7 +53,7 @@ TODO: use modal props and close return data
 		transition:fly|global={{ y: 50 }}
 	>
 		<div
-			class="pointer-events-auto bg-white dark:bg-slate-700 text-gray-800 dark:text-slate-300 p-4 rounded-xl shadow-sm w-full max-h-full overflow-y-auto"
+			class="pointer-events-auto bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-300 p-4 rounded-md shadow-sm w-full max-h-full overflow-y-auto"
 		>
 			<form onsubmit={preventDefault(() => {})} id="questionOptions" name="questionOptions">
 				<div class="m-2 sm:m-4 flex flex-col gap-6">
@@ -61,7 +61,7 @@ TODO: use modal props and close return data
 						<i class="fa-regular fa-rectangle-list text-4xl"></i>
 						<div>
 							<h3 class="leading-tight text-2xl font-bold">{q.label}</h3>
-							<h4 class="leading-tight text-lg font-semibold text-gray-500 dark:text-slate-400">
+							<h4 class="leading-tight text-lg font-semibold text-gray-500 dark:text-gray-400">
 								Options
 							</h4>
 						</div>
@@ -70,12 +70,12 @@ TODO: use modal props and close return data
 						{#each q.options as o}
 							<div
 								data-id={o.id}
-								class="list-group-item bg-gray-100/50 dark:bg-slate-800/50 p-4 rounded-xl"
+								class="list-group-item bg-gray-100/50 dark:bg-gray-800/50 p-4 rounded-md"
 							>
 								<div class="w-full">
 									<div class="flex items-center gap-2 md:gap-4">
 										<i
-											class="handle fa-solid fa-grip-vertical text-gray-500 dark:text-slate-400 cursor-move"
+											class="handle fa-solid fa-grip-vertical text-gray-500 dark:text-gray-400 cursor-move"
 										></i>
 
 										<div class="w-full flex items-center gap-4">
@@ -97,7 +97,7 @@ TODO: use modal props and close return data
 													<i class="fa-solid fa-xmark"></i>
 												</button>
 												<div
-													class="select-none text-gray-500 dark:text-slate-400 hover:text-blurple dark:hover:text-blurple cursor-pointer transition duration-300 font-medium flex justify-between"
+													class="select-none text-gray-500 dark:text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-600 cursor-pointer transition duration-300 font-semibold flex justify-between"
 													onclick={() => (expanded = expanded === o.id ? null : o.id)}
 												>
 													<span class="text-sm">
@@ -114,11 +114,11 @@ TODO: use modal props and close return data
 									</div>
 									{#if expanded === o.id}
 										<div>
-											<label class="font-medium">
+											<label class="font-semibold">
 												Label
 												<Required />
 												<i
-													class="fa-solid fa-circle-question text-gray-500 dark:text-slate-400 cursor-help"
+													class="fa-solid fa-circle-question text-gray-500 dark:text-gray-400 cursor-help"
 													title="The name of the option"
 												></i>
 												<input
@@ -131,10 +131,10 @@ TODO: use modal props and close return data
 											</label>
 										</div>
 										<div>
-											<label class="font-medium">
+											<label class="font-semibold">
 												Description
 												<i
-													class="fa-solid fa-circle-question text-gray-500 dark:text-slate-400 cursor-help"
+													class="fa-solid fa-circle-question text-gray-500 dark:text-gray-400 cursor-help"
 													title="The description of the option"
 												></i>
 												<input
@@ -146,10 +146,10 @@ TODO: use modal props and close return data
 											</label>
 										</div>
 										<div>
-											<label class="font-medium">
+											<label class="font-semibold">
 												Emoji
 												<i
-													class="fa-solid fa-circle-question text-gray-500 dark:text-slate-400 cursor-help"
+													class="fa-solid fa-circle-question text-gray-500 dark:text-gray-400 cursor-help"
 													title="A default emoji name, or custom emoji ID"
 												></i>
 												<span class="text-2xl">{emoji.get(o.emoji) ?? ''}</span>
@@ -162,11 +162,11 @@ TODO: use modal props and close return data
 											</label>
 										</div>
 										<div>
-											<label class="font-medium">
+											<label class="font-semibold">
 												Value
 												<Required />
 												<i
-													class="fa-solid fa-circle-question text-gray-500 dark:text-slate-400 cursor-help"
+													class="fa-solid fa-circle-question text-gray-500 dark:text-gray-400 cursor-help"
 													title="The value of this option (the text stored and used in placeholders)"
 												></i>
 												<input
@@ -187,7 +187,7 @@ TODO: use modal props and close return data
 						<div class="text-center">
 							<button
 								type="button"
-								class="hover:text-green-300 text-green-500 dark:hover:text-green-500/50 dark:text-green-500 p-2 px-5 rounded-lg font-medium transition duration-300 disabled:cursor-not-allowed"
+								class="hover:text-green-300 text-green-500 dark:hover:text-green-500/50 dark:text-green-500 p-2 px-5 rounded-lg font-semibold transition duration-300 disabled:cursor-not-allowed"
 								onclick={() => {
 									q.options.push({
 										id: uuidv4(),
@@ -209,7 +209,7 @@ TODO: use modal props and close return data
 					<button
 						type="submit"
 						form="questionOptions"
-						class="bg-green-300 hover:bg-green-500 hover:text-white dark:bg-green-500/75 dark:hover:bg-green-500 dark:hover:text-white p-2 px-5 rounded-lg font-medium transition duration-300 disabled:cursor-not-allowed"
+						class="bg-green-300 hover:bg-green-500 hover:text-white dark:bg-green-500/75 dark:hover:bg-green-500 dark:hover:text-white p-2 px-5 rounded-lg font-semibold transition duration-300 disabled:cursor-not-allowed"
 						onclick={() => close(DATA)}
 					>
 						<i class="fa-solid fa-check"></i>
@@ -220,3 +220,4 @@ TODO: use modal props and close return data
 		</div>
 	</div>
 {/if} -->
+

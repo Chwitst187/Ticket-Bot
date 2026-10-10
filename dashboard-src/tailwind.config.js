@@ -1,5 +1,19 @@
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import colors from 'tailwindcss/colors';
+
+const gray = {
+	50: 'hsl(216, 33%, 97%)',
+	100: 'hsl(214, 15%, 91%)',
+	200: 'hsl(210, 16%, 82%)',
+	300: 'hsl(211, 13%, 65%)',
+	400: 'hsl(211, 10%, 53%)',
+	500: 'hsl(211, 12%, 43%)',
+	600: 'hsl(209, 14%, 37%)',
+	700: 'hsl(209, 18%, 30%)',
+	800: 'hsl(209, 20%, 25%)',
+	900: 'hsl(210, 24%, 16%)'
+};
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -9,26 +23,30 @@ export default {
 
 	theme: {
 		extend: {
+			fontFamily: {
+				sans: ['"IBM Plex Sans"', '"Roboto"', 'system-ui', 'sans-serif'],
+				header: ['"IBM Plex Sans"', '"Roboto"', 'system-ui', 'sans-serif']
+			},
 			colors: {
-				blurple: '#5865F2',
+				blurple: colors.blue[500],
+				gray: gray,
+				neutral: gray,
+				primary: colors.blue,
+				cyan: colors.cyan,
 				dgrey: {
-					// brand "black" 23272A
-					// very dark 1E1F22
-					// darker 2B2D31
-					// slightly dark 313338
-					// not so dark 404249
-					950: '#1E1F22',
-					900: '#2B2D31',
-					// 950: '#1E1F23',
-					// 900: '#202225',
-					800: '#2f3136',
-					700: '#36393f',
-					600: '#4f545c',
-					400: '#d4d7dc',
-					300: '#e3e5e8',
-					200: '#ebedef',
-					100: '#f2f3f5'
+					950: 'hsl(210, 24%, 12%)',
+					900: 'hsl(210, 24%, 16%)',
+					800: 'hsl(209, 20%, 25%)',
+					700: 'hsl(209, 18%, 30%)',
+					600: 'hsl(209, 14%, 37%)',
+					400: 'hsl(211, 10%, 53%)',
+					300: 'hsl(211, 13%, 65%)',
+					200: 'hsl(210, 16%, 82%)',
+					100: 'hsl(214, 15%, 91%)'
 				}
+			},
+			transitionDuration: {
+				250: '250ms'
 			}
 		}
 	},

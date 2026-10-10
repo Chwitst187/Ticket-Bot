@@ -17,7 +17,7 @@
 	<div class="my-8 text-lg font-semibold">
 		<a
 			href={`${base}/${$page.params.guild}/feedback`}
-			class="transition duration-300 hover:text-blurple"
+			class="transition duration-300 hover:text-cyan-600"
 		>
 			View feedback in the portal
 			<i class="fa-solid fa-arrow-right-long"></i>
