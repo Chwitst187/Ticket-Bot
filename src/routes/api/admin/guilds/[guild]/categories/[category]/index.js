@@ -90,6 +90,7 @@ module.exports.patch = fastify => ({
 			name: true,
 			openingMessage: true,
 			pingRoles: true,
+			autoTag: true,
 			questions: {
 				select: {
 					// createdAt: true,

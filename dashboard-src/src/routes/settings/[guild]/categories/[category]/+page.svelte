@@ -43,7 +43,7 @@
 		});
 	});
 
-	let { category, channels, roles, url } = $state(data);
+	let { category, channels, roles, tags, url } = $state(data);
 
 	const slowmodes = [
 		'5s',

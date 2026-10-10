@@ -85,6 +85,7 @@ model Category {
     name            String
     openingMessage  String     @db.Text
     pingRoles       Json       @default("[]")
+    autoTag         String?
     questions       Question[]
     ratelimit       Int?
     requiredRoles   Json       @default("[]")

@@ -559,6 +559,28 @@ module.exports = class TicketManager {
 			embeds,
 		});
 
+		
+		if (category.autoTag) {
+			const tag = await this.client.prisma.tag.findUnique({
+				where: {
+					guildId_name: {
+						guildId: category.guildId,
+						name: category.autoTag,
+					},
+				},
+			});
+			if (tag) {
+				await channel.send({
+					content: interaction.user.toString(),
+					embeds: [
+						new ExtendedEmbedBuilder()
+							.setColor(category.guild.primaryColour)
+							.setDescription(tag.content),
+					],
+				}).catch(this.client.log.error);
+			}
+		}
+
 		sent.pin({ reason: 'Ticket opening message' })
 			.then(() => {
 				const recent = channel.messages.cache.last(3);

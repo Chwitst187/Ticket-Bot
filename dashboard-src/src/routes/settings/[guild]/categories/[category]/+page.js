@@ -17,6 +17,7 @@ export async function load({ fetch, params }) {
 			name: '',
 			openingMessage: '',
 			pingRoles: [],
+			autoTag: null,
 			questions: [],
 			ratelimit: null,
 			requiredRoles: [],
@@ -45,6 +46,7 @@ export async function load({ fetch, params }) {
 		channels: await (
 			await fetch(`/api/admin/guilds/${params.guild}/data?query=channels.cache`, fetchOptions)
 		).json(),
+		tags: await (await fetch(`/api/admin/guilds/${params.guild}/tags`, fetchOptions)).json(),
 		roles: await (
 			await fetch(`/api/admin/guilds/${params.guild}/data?query=roles.cache`, fetchOptions)
 		).json(),
