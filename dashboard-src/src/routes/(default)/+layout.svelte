@@ -1,11 +1,13 @@
 <script>
+	import TopBar from '$components/TopBar.svelte';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { navigating } from '$app/stores';
 	// import { Modals } from 'svelte-modals';
 	import Spinner from '$components/Spinner.svelte';
-	/** @type {{children?: import('svelte').Snippet}} */
-	let { children } = $props();
+	/** @type {{data: any, children?: import('svelte').Snippet}} */
+	let { data, children } = $props();
+	const { client, user, theme } = data;
 
 	let mounted = $state(false);
 	onMount(() => {
@@ -14,9 +16,7 @@
 	});
 </script>
 
-<div
-	class="absolute h-max min-h-screen w-full bg-dgrey-100 text-dgrey-600 dark:bg-dgrey-800 dark:text-dgrey-300"
->
+<div class="absolute h-max min-h-screen w-full bg-gray-200 text-gray-800 dark:bg-gray-900 dark:text-gray-300">
 	<!-- <Modals>
 		{#snippet backdrop({ close })}
 			<div class="backdrop" transition:fade onclick={close} onkeypress={close}></div>
@@ -30,7 +30,11 @@
 			<Spinner />
 		</div>
 	{:else}
-		{@render children?.()}
+		<TopBar {user} {theme} />
+		<div class="m-2 sm:m-6 lg:m-12">
+			<div class="mx-auto max-w-7xl">
+				{@render children?.()}
+			</div>
+		</div>
 	{/if}
 </div>
-
