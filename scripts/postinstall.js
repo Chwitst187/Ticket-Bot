@@ -68,4 +68,5 @@ if (provider === 'sqlite' && !process.env.DB_CONNECTION_URL) {
 	await npx('prisma generate');
 	await npx('prisma migrate deploy');
 })();
-require('./patch_dashboard.js');
+
+

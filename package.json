@@ -20,7 +20,7 @@
 		"test": "node scripts/check-i18n",
 		"__prepare": "husky install",
 		"prestart": "npm run pull",
-		"pull": "git pull && npm install && npm install --legacy-peer-deps --prefix dashboard"
+		"pull": "git pull && npm install"
 	},
 	"commitlint": {
 		"extends": [
