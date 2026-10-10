@@ -1,0 +1,1 @@
+ALTER TABLE `categories` ADD COLUMN `autoTag` VARCHAR(191) NULL;
