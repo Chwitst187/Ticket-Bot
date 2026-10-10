@@ -15,7 +15,7 @@ const sqliteMiddleware = require('./lib/middleware/prisma-sqlite');
 const ms = require('ms');
 
 module.exports = class Client extends FrameworkClient {
-	constructor() {
+	constructor(config, log) {
 		super(
 			{
 				intents: [
@@ -41,8 +41,8 @@ module.exports = class Client extends FrameworkClient {
 			{ baseDir: __dirname },
 		);
 
-		this.config = {};
-		this.log = {};
+		this.config = config || {};
+		this.log = log || {};
 		this.init();
 	}
 
