@@ -19,7 +19,7 @@ module.exports = client => {
 
 			switch (compared) {
 			case -1: {
-				client.log.notice('You are running a pre-release version of Discord Tickets');
+				client.log.info('You are running a pre-release version of Discord Tickets');
 				break;
 			}
 			case 0: {
@@ -35,7 +35,7 @@ module.exports = client => {
 				const guide = 'https://discordtickets.app/self-hosting/updating/';
 				const { default: boxen } = await import('boxen');
 
-				client.log.notice(
+				client.log.info(
 					short('&r&6A new version of Discord Tickets is available (&c%s&6 -> &a%s&6)&r\n'),
 					currentVersion,
 					latestVersion,
