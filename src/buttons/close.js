@@ -34,22 +34,22 @@ module.exports = class CloseButton extends Button {
 				});
 			}
 			const getMessage = client.i18n.getLocale(ticket.guild.locale);
-			await interaction.reply({
-				embeds: [
-					new ExtendedEmbedBuilder()
-						.setColor(ticket.guild.successColour)
-						.setTitle(getMessage('commands.slash.force-close.closed_one.title') || 'Closed')
-						.setDescription(getMessage('commands.slash.force-close.closed_one.description', { ticket: ticket.id }) || 'The ticket will be closed shortly.'),
-				],
-			});
-			const stale = client.tickets.$stale.get(interaction.channel.id) || {};
-			setTimeout(async () => {
-				await client.tickets.finallyClose(interaction.channel.id, {
-					closedBy: interaction.user.id,
-					reason: stale.reason || null,
-				});
-			}, 3000);
-			return;
+			const { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+			const modal = new ModalBuilder()
+				.setCustomId(JSON.stringify({ action: 'force_close' }))
+				.setTitle(getMessage('commands.slash.force-close.closed_one.title') || 'Close Ticket')
+				.addComponents(
+					new ActionRowBuilder().addComponents(
+						new TextInputBuilder()
+							.setCustomId('reason')
+							.setLabel('Reason')
+							.setStyle(TextInputStyle.Short)
+							.setValue('N/A')
+							.setPlaceholder('Type a reason or leave as N/A')
+							.setRequired(true)
+					)
+				);
+			return await interaction.showModal(modal);
 		} else if (id.accepted === undefined) {
 			// the close button on the opening message, the same as using /close
 			await client.tickets.beforeRequestClose(interaction);
