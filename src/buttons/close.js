@@ -35,9 +35,19 @@ module.exports = class CloseButton extends Button {
 			}
 			const getMessage = client.i18n.getLocale(ticket.guild.locale);
 			const { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+			const creator = await client.users.fetch(ticket.createdById).catch(() => null);
+			const uName = creator ? (creator.displayName || creator.username) : null;
+			let modalTitle = uName
+				? `Instant Close • #${ticket.number} (${uName})`
+				: `Instant Close • #${ticket.number}`;
+			if (modalTitle.length > 45) {
+				const maxNameLen = Math.max(1, 45 - `Instant Close • #${ticket.number} (…)`.length);
+				modalTitle = `Instant Close • #${ticket.number} (${uName.slice(0, maxNameLen)}…)`;
+			}
+
 			const modal = new ModalBuilder()
 				.setCustomId(JSON.stringify({ action: 'force_close' }))
-				.setTitle(getMessage('commands.slash.force-close.closed_one.title') || 'Close Ticket')
+				.setTitle(modalTitle)
 				.addComponents(
 					new ActionRowBuilder().addComponents(
 						new TextInputBuilder()
