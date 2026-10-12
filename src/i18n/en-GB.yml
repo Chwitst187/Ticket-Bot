@@ -368,6 +368,13 @@ log:
     description: "{user} {verb} a ticket"
     removed: Removed members
     ticket: Ticket
+    fields:
+      category: Category
+      creator: Creator
+      action_by: Action by
+      assigned_to: Assigned to
+      closed_by: Closed by
+      released_by: Released by
     title: Ticket {verb}
     verb:
       claim: claimed

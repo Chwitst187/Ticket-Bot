@@ -4,7 +4,9 @@ const {
 } = require('discord.js');
 const { diff: getDiff } = require('object-diffy');
 const ShortUniqueId = require('short-unique-id');
+const { pools } = require('./threads');
 
+const { crypto } = pools;
 const uid = new ShortUniqueId();
 
 const getSUID = () => uid.stamp(10);
@@ -75,51 +77,108 @@ async function logAdminEvent(client, {
 	});
 	/** @type {import("discord.js").Guild} */
 	const guild = client.guilds.cache.get(guildId);
-	const member = await guild.members.fetch(userId);
-	client.log.info.settings(`${member.user.tag} ${action}d ${target.type} ${target.id}`);
-	if (!settings.logChannel) return;
-	const colour = action === 'create'
-		? 'Green' : action === 'update'
-			? 'Orange' : action === 'delete'
-				? 'Red' : 'Default';
+	if (!guild) return;
+
+	let member = null;
+	try {
+		member = await guild.members.fetch(userId);
+	} catch {
+		member = null;
+	}
+	const user = member?.user || await client.users.fetch(userId).catch(() => null);
+
+	client.log.info.settings(`${user?.tag || userId} ${action}d ${target.type} ${target.id}`);
+	if (!settings?.logChannel) return;
+
+	const colours = {
+		create: 0x57F287,
+		delete: 0xED4245,
+		update: 0xFEE75C,
+	};
+	const colour = colours[action] || 0x5865F2;
 	const getMessage = client.i18n.getLocale(settings.locale);
 	const i18nOptions = {
-		user: `<@${member.user.id}>`,
+		user: user ? `<@${user.id}>` : `<@${userId}>`,
 		verb: getMessage(`log.admin.verb.${action}`),
 	};
 	const channel = client.channels.cache.get(settings.logChannel);
 	if (!channel) return;
-	const embeds = [
-		new EmbedBuilder()
-			.setColor(colour)
-			.setAuthor({
-				iconURL: member.displayAvatarURL(),
-				name: member.displayName,
-			})
-			.setTitle(getMessage('log.admin.title.joined', {
-				...i18nOptions,
-				targetType: getMessage(`log.admin.title.target.${target.type}`),
-				verb: getMessage(`log.admin.verb.${action}`),
-			}))
-			.setDescription(getMessage('log.admin.description.joined', {
-				...i18nOptions,
-				targetType: getMessage(`log.admin.description.target.${target.type}`),
-				verb: getMessage(`log.admin.verb.${action}`),
-			}))
-			.addFields([
-				{
-					name: getMessage(`log.admin.title.target.${target.type}`),
-					value: target.name ? `${target.name} (\`${target.id}\`)` : target.id,
-				},
-			]),
-	];
+
+	const actionIcons = {
+		create: '➕',
+		delete: '🗑️',
+		update: '✏️',
+	};
+	const icon = actionIcons[action] || '⚙️';
+
+	const authorName = member
+		? `${member.displayName} (@${member.user.username})`
+		: (user ? `${user.username}` : 'System');
+	const authorIcon = member?.displayAvatarURL({
+		dynamic: true,
+		size: 128,
+	}) ||
+		user?.displayAvatarURL({
+			dynamic: true,
+			size: 128,
+		}) ||
+		guild.iconURL({ dynamic: true });
+
+	const mainEmbed = new EmbedBuilder()
+		.setColor(colour)
+		.setAuthor({
+			iconURL: authorIcon,
+			name: authorName,
+		})
+		.setTitle(`${icon} ${getMessage('log.admin.title.joined', {
+			...i18nOptions,
+			targetType: getMessage(`log.admin.title.target.${target.type}`),
+			verb: getMessage(`log.admin.verb.${action}`),
+		})}`)
+		.setDescription(`> ${getMessage('log.admin.description.joined', {
+			...i18nOptions,
+			targetType: getMessage(`log.admin.description.target.${target.type}`),
+			verb: getMessage(`log.admin.verb.${action}`),
+		})}`)
+		.setThumbnail(authorIcon || guild.iconURL({
+			dynamic: true,
+			size: 256,
+		}))
+		.addFields([
+			{
+				inline: true,
+				name: `🎯 ${getMessage(`log.admin.title.target.${target.type}`)}`,
+				value: target.name ? `${target.name} (\`${target.id}\`)` : `\`${target.id}\``,
+			},
+			{
+				inline: true,
+				name: '🛠️ ' + (getMessage('log.ticket.fields.action_by') || 'Ausgeführt von'),
+				value: `<@${userId}>`,
+			},
+		])
+		.setFooter({
+			iconURL: guild.iconURL({ dynamic: true }) || undefined,
+			text: `${guild.name} • Admin Log`,
+		})
+		.setTimestamp();
+
+	if (guild.bannerURL()) {
+		mainEmbed.setImage(guild.bannerURL({ size: 1024 }));
+	}
+
+	const embeds = [mainEmbed];
 
 	if (diff?.original && Object.entries(makeDiff(diff)).length) {
 		embeds.push(
 			new EmbedBuilder()
 				.setColor(colour)
-				.setTitle(getMessage('log.admin.changes'))
-				.setFields(makeDiff(diff)),
+				.setTitle(`📝 ${getMessage('log.admin.changes')}`)
+				.setFields(makeDiff(diff))
+				.setFooter({
+					iconURL: guild.iconURL({ dynamic: true }) || undefined,
+					text: `${guild.name} • Admin Log`,
+				})
+				.setTimestamp(),
 		);
 	}
 
@@ -129,57 +188,228 @@ async function logAdminEvent(client, {
 /**
  * @param {import("client")} client
  * @param {object} details
- * @param {string} details.guildId
  * @param {string} details.userId
  * @param {string} details.action
+ * @param {object} details.target
+ * @param {object} [details.diff]
+ * @param {object} [details.payload]
 */
 async function logTicketEvent(client, {
 	userId, action, target, diff, payload,
 }) {
-	const ticket = await client.tickets.getTicket(target.id);
+	const ticket = await client.tickets.getTicket(target.id, true) || await client.tickets.getTicket(target.id);
 	if (!ticket) return;
 	/** @type {import("discord.js").Guild} */
 	const guild = client.guilds.cache.get(ticket.guild.id);
-	const member = await guild.members.fetch(userId);
-	client.log.info.tickets(`${member.user.tag} ${client.i18n.getMessage('en-GB', `log.ticket.verb.${action}`)} ticket ${target.id}`);
+	if (!guild) return;
+
+	let member = null;
+	try {
+		member = await guild.members.fetch(userId);
+	} catch {
+		member = null;
+	}
+	const user = member?.user || await client.users.fetch(userId).catch(() => null);
+
+	client.log.info.tickets(`${user?.tag || userId} ${client.i18n.getMessage('en-GB', `log.ticket.verb.${action}`)} ticket ${target.id}`);
 	if (!ticket.guild.logChannel) return;
 	const channel = client.channels.cache.get(ticket.guild.logChannel);
 	if (!channel) return;
-	const colour = action === 'create'
-		? 'Aqua' : action === 'close'
-			? 'DarkAqua' : action === 'update'
-				? 'Purple' : action === 'claim'
-					? 'LuminousVividPink' : action === 'unclaim'
-						? 'DarkVividPink' : 'Default';
+
+	const colours = {
+		claim: 0x5865F2,
+		close: 0xED4245,
+		create: 0x57F287,
+		unclaim: 0xFEE75C,
+		update: 0xEB459E,
+	};
+	const colour = colours[action] || ticket.guild.primaryColour || 0x5865F2;
+
+	const actionIcons = {
+		claim: '🙌',
+		close: '🔴',
+		create: '🟢',
+		unclaim: '♻️',
+		update: '⚙️',
+	};
+	const actionIcon = actionIcons[action] || '🎫';
+
 	const getMessage = client.i18n.getLocale(ticket.guild.locale);
 	const i18nOptions = {
-		user: `<@${member.user.id}>`,
+		user: user ? `<@${user.id}>` : `<@${userId}>`,
 		verb: getMessage(`log.ticket.verb.${action}`),
 	};
-	const embeds = [
-		new EmbedBuilder()
-			.setColor(colour)
-			.setAuthor({
-				iconURL: member.displayAvatarURL(),
-				name: member.displayName,
-			})
-			.setTitle(getMessage('log.ticket.title', i18nOptions))
-			.setDescription(getMessage('log.ticket.description', i18nOptions))
-			.addFields([
-				{
-					name: getMessage('log.ticket.ticket'),
-					value: target.name ? `${target.name} (\`${target.id}\`)` : target.id,
-				},
-				...payload?.fields ?? [],
-			]),
-	];
+
+	const authorName = member
+		? `${member.displayName} (@${member.user.username})`
+		: (user ? `${user.username}` : 'System');
+	const authorIcon = member?.displayAvatarURL({
+		dynamic: true,
+		size: 128,
+	}) ||
+		user?.displayAvatarURL({
+			dynamic: true,
+			size: 128,
+		}) ||
+		guild.iconURL({ dynamic: true });
+
+	const footerIcon = guild.iconURL({ dynamic: true }) || undefined;
+	const footerText = `${guild.name} • Ticket #${ticket.number}`;
+
+	const title = `${actionIcon} Ticket #${ticket.number} • ${getMessage('log.ticket.title', i18nOptions)}`;
+	const description = `> ${getMessage('log.ticket.description', i18nOptions)}`;
+
+	let thumbnailURL = null;
+	if (action === 'create') {
+		const creator = ticket.createdById ? await client.users.fetch(ticket.createdById).catch(() => null) : null;
+		thumbnailURL = creator?.displayAvatarURL({
+			dynamic: true,
+			size: 256,
+		}) ||
+			authorIcon ||
+			guild.iconURL({
+				dynamic: true,
+				size: 256,
+			});
+	} else {
+		thumbnailURL = authorIcon || guild.iconURL({
+			dynamic: true,
+			size: 256,
+		});
+	}
+
+	const fields = [];
+
+	let channelDisplay;
+	if (action === 'close' || !client.channels.cache.has(ticket.id)) {
+		channelDisplay = target.name || `${ticket.category ? `${ticket.category.name} ` : ''}#${ticket.number}`;
+	} else {
+		channelDisplay = `<#${ticket.id}>`;
+	}
+
+	fields.push({
+		inline: true,
+		name: `🎫 ${getMessage('log.ticket.ticket')}`,
+		value: channelDisplay,
+	});
+
+	if (ticket.category) {
+		const categoryLabel = `${ticket.category.emoji ? ticket.category.emoji + ' ' : ''}${ticket.category.name}`;
+		fields.push({
+			inline: true,
+			name: `📁 ${getMessage('log.ticket.fields.category') || 'Kategorie'}`,
+			value: categoryLabel,
+		});
+	}
+
+	fields.push({
+		inline: true,
+		name: `👤 ${getMessage('log.ticket.fields.creator') || 'Ersteller'}`,
+		value: `<@${ticket.createdById}>`,
+	});
+
+	if (action === 'claim') {
+		if (ticket.claimedRoleId) {
+			fields.push({
+				inline: true,
+				name: `🏷️ ${getMessage('log.ticket.fields.assigned_to') || 'Zugewiesen an'}`,
+				value: `<@&${ticket.claimedRoleId}>`,
+			});
+		} else if (ticket.claimedById) {
+			fields.push({
+				inline: true,
+				name: `👤 ${getMessage('log.ticket.fields.assigned_to') || 'Zugewiesen an'}`,
+				value: `<@${ticket.claimedById}>`,
+			});
+		}
+		fields.push({
+			inline: true,
+			name: `🛠️ ${getMessage('log.ticket.fields.action_by') || 'Ausgeführt von'}`,
+			value: `<@${userId}>`,
+		});
+	} else if (action === 'unclaim') {
+		fields.push({
+			inline: true,
+			name: `♻️ ${getMessage('log.ticket.fields.released_by') || 'Freigegeben von'}`,
+			value: `<@${userId}>`,
+		});
+	} else if (action === 'close') {
+		fields.push({
+			inline: true,
+			name: `🔒 ${getMessage('log.ticket.fields.closed_by') || 'Geschlossen von'}`,
+			value: `<@${userId}>`,
+		});
+	} else if (action === 'update') {
+		fields.push({
+			inline: true,
+			name: `🛠️ ${getMessage('log.ticket.fields.action_by') || 'Ausgeführt von'}`,
+			value: `<@${userId}>`,
+		});
+	}
+
+	if (action === 'create' && ticket.topic) {
+		let decryptedTopic = null;
+		try {
+			decryptedTopic = await crypto.queue(w => w.decrypt(ticket.topic));
+		} catch {
+			decryptedTopic = ticket.topic;
+		}
+		if (decryptedTopic) {
+			fields.push({
+				inline: false,
+				name: `📌 ${getMessage('dm.closed.fields.topic') || 'Thema'}`,
+				value: `> ${decryptedTopic}`,
+			});
+		}
+	}
+
+	if (payload?.fields?.length) {
+		for (const field of payload.fields) {
+			const isDuplicate = fields.some(f => f.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === field.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase());
+			if (!isDuplicate) {
+				fields.push(field);
+			}
+		}
+	}
+
+	const mainEmbed = new EmbedBuilder()
+		.setColor(colour)
+		.setAuthor({
+			iconURL: authorIcon,
+			name: authorName,
+		})
+		.setTitle(title)
+		.setDescription(description)
+		.addFields(fields)
+		.setFooter({
+			iconURL: footerIcon,
+			text: footerText,
+		})
+		.setTimestamp();
+
+	if (thumbnailURL) {
+		mainEmbed.setThumbnail(thumbnailURL);
+	}
+
+	if (ticket.category?.image && typeof ticket.category.image === 'string' && ticket.category.image.startsWith('http')) {
+		mainEmbed.setImage(ticket.category.image);
+	} else if (guild.bannerURL()) {
+		mainEmbed.setImage(guild.bannerURL({ size: 1024 }));
+	}
+
+	const embeds = [mainEmbed];
 
 	if (diff?.original && Object.entries(makeDiff(diff)).length) {
 		embeds.push(
 			new EmbedBuilder()
 				.setColor(colour)
-				.setTitle(getMessage('log.admin.changes'))
-				.setFields(makeDiff(diff)),
+				.setTitle(`📝 ${getMessage('log.admin.changes')}`)
+				.setFields(makeDiff(diff))
+				.setFooter({
+					iconURL: footerIcon,
+					text: footerText,
+				})
+				.setTimestamp(),
 		);
 	}
 
@@ -201,41 +431,88 @@ async function logMessageEvent(client, {
 }) {
 	if (!ticket) return;
 	if (executor === undefined) executor = target.member;
-	client.log.info.tickets(`${executor?.user.tag || 'Unknown'} ${client.i18n.getMessage('en-GB', `log.message.verb.${action}`)} message ${target.id}`);
+	client.log.info.tickets(`${executor?.user?.tag || executor?.tag || 'Unknown'} ${client.i18n.getMessage('en-GB', `log.message.verb.${action}`)} message ${target.id}`);
 	if (!ticket.guild.logChannel) return;
-	const colour = action === 'update'
-		? 'Purple' : action === 'delete'
-			? 'DarkPurple' : 'Default';
+	const colours = {
+		delete: 0xED4245,
+		update: 0xFEE75C,
+	};
+	const colour = colours[action] || 0x5865F2;
 	const getMessage = client.i18n.getLocale(ticket.guild.locale);
 	const i18nOptions = {
-		user: `<@${executor?.user.id}>`,
+		user: executor?.user ? `<@${executor.user.id}>` : (executor?.id ? `<@${executor.id}>` : 'Unknown'),
 		verb: getMessage(`log.message.verb.${action}`),
 	};
 	const channel = client.channels.cache.get(ticket.guild.logChannel);
 	if (!channel) return;
-	const embeds = [
-		new EmbedBuilder()
-			.setColor(colour)
-			.setAuthor({
-				iconURL: target.member?.displayAvatarURL() || 'https://discord.com/assets/1f0bfc0865d324c2587920a7d80c609b.png',
-				name: target.member?.displayName || 'Unknown',
-			})
-			.setTitle(getMessage('log.message.title', i18nOptions))
-			.setDescription(getMessage('log.message.description', i18nOptions))
-			.addFields([
-				{
-					name: getMessage('log.message.message'),
-					value: `[\`${target.id}\`](${target.url})`,
-				},
-			]),
-	];
+	const guild = client.guilds.cache.get(ticket.guild.id);
+
+	const authorName = target.member
+		? `${target.member.displayName} (@${target.author?.username || target.member.user?.username})`
+		: (target.author ? target.author.username : 'Unknown');
+	const authorIcon = target.member?.displayAvatarURL({ dynamic: true }) ||
+		target.author?.displayAvatarURL({ dynamic: true }) ||
+		'https://discord.com/assets/1f0bfc0865d324c2587920a7d80c609b.png';
+
+	const actionIcons = {
+		delete: '🗑️',
+		update: '✏️',
+	};
+	const icon = actionIcons[action] || '💬';
+
+	const mainEmbed = new EmbedBuilder()
+		.setColor(colour)
+		.setAuthor({
+			iconURL: authorIcon,
+			name: authorName,
+		})
+		.setTitle(`${icon} Ticket #${ticket.number} • ${getMessage('log.message.title', i18nOptions)}`)
+		.setDescription(`> ${getMessage('log.message.description', i18nOptions)}`)
+		.setThumbnail(authorIcon)
+		.addFields([
+			{
+				inline: true,
+				name: `🎫 ${getMessage('log.ticket.ticket')}`,
+				value: `<#${ticket.id}>`,
+			},
+			{
+				inline: true,
+				name: `💬 ${getMessage('log.message.message')}`,
+				value: `[\`${target.id}\`](${target.url})`,
+			},
+			{
+				inline: true,
+				name: '👤 ' + (getMessage('log.ticket.fields.creator') || 'Autor'),
+				value: target.author ? `<@${target.author.id}>` : '-',
+			},
+		])
+		.setFooter({
+			iconURL: guild?.iconURL({ dynamic: true }) || undefined,
+			text: `${guild?.name || 'Server'} • Ticket #${ticket.number}`,
+		})
+		.setTimestamp();
+
+	const imageAttachment = target.attachments?.find(att => {
+		const contentType = att.contentType || '';
+		return contentType.startsWith('image/') || /\.(png|jpe?g|gif|webp)$/i.test(att.name || att.url);
+	});
+	if (imageAttachment) {
+		mainEmbed.setImage(imageAttachment.url);
+	}
+
+	const embeds = [mainEmbed];
 
 	if (diff?.original && Object.entries(makeDiff(diff)).length) {
 		embeds.push(
 			new EmbedBuilder()
 				.setColor(colour)
-				.setTitle(getMessage('log.admin.changes'))
-				.setFields(makeDiff(diff)),
+				.setTitle(`📝 ${getMessage('log.admin.changes')}`)
+				.setFields(makeDiff(diff))
+				.setFooter({
+					iconURL: guild?.iconURL({ dynamic: true }) || undefined,
+					text: `${guild?.name || 'Server'} • Ticket #${ticket.number}`,
+				})
+				.setTimestamp(),
 		);
 	}
 

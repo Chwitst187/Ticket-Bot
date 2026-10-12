@@ -1953,7 +1953,7 @@ module.exports = class TicketManager {
 			feedback: ticket.feedback && {
 				inline: true,
 				name: getMessage('dm.closed.fields.feedback'),
-				value: Array(ticket.feedback.rating).fill('⭐').join(' ') + ` (${ticket.feedback.rating}/5)`,
+				value: '⭐'.repeat(ticket.feedback.rating) + '☆'.repeat(Math.max(0, 5 - ticket.feedback.rating)) + ` (${ticket.feedback.rating}/5)`,
 			},
 			firstResponseAt: ticket.firstResponseAt && {
 				inline: true,
@@ -1963,26 +1963,37 @@ module.exports = class TicketManager {
 			reason: reason && {
 				inline: true,
 				name: getMessage('dm.closed.fields.reason'),
-				value: reason,
+				value: `> ${reason}`,
 			},
 			ticket: {
 				inline: true,
 				name: getMessage('dm.closed.fields.ticket'),
-				value: `${ticket.category.name} **#${ticket.number}**`,
+				value: `${ticket.category ? `${ticket.category.emoji ? ticket.category.emoji + ' ' : ''}${ticket.category.name} ` : ''}**#${ticket.number}**`,
 			},
 			topic: ticket.topic && {
-				inline: true,
+				inline: false,
 				name: getMessage('dm.closed.fields.topic'),
-				value: await crypto.queue(w => w.decrypt(ticket.topic)),
+				value: `> ${await crypto.queue(w => w.decrypt(ticket.topic))}`,
 			},
 		};
 
 		const dmEmbed = new ExtendedEmbedBuilder({
-			iconURL: guild.iconURL(),
+			iconURL: guild.iconURL({ dynamic: true }),
 			text: ticket.guild.footer,
 		})
 			.setColor(ticket.guild.primaryColour)
-			.setTitle(getMessage('dm.closed.title'));
+			.setTitle(getMessage('dm.closed.title'))
+			.setThumbnail(guild.iconURL({
+				dynamic: true,
+				size: 256,
+			}))
+			.setTimestamp(ticket.closedAt || new Date());
+
+		if (ticket.category?.image && typeof ticket.category.image === 'string' && ticket.category.image.startsWith('http')) {
+			dmEmbed.setImage(ticket.category.image);
+		} else if (guild.bannerURL()) {
+			dmEmbed.setImage(guild.bannerURL({ size: 1024 }));
+		}
 
 		dmEmbed.addFields(fields.ticket);
 		if (ticket.topic) dmEmbed.addFields(fields.topic);
@@ -2009,6 +2020,7 @@ module.exports = class TicketManager {
 		fieldsArray.push(fields.created, fields.closed);
 		if (ticket.firstResponseAt) fieldsArray.push(fields.firstResponseAt);
 		if (fields.feedback) {
+			const decryptedComment = ticket.feedback.comment && await crypto.queue(w => w.decrypt(ticket.feedback.comment));
 			fieldsArray.push(
 				{
 					...fields.feedback,
@@ -2018,7 +2030,7 @@ module.exports = class TicketManager {
 				{
 					inline: true,
 					name: getMessage('modals.feedback.comment.label'),
-					value: (ticket.feedback.comment && await crypto.queue(w => w.decrypt(ticket.feedback.comment))) || getMessage('ticket.answers.no_value'),
+					value: decryptedComment ? `> ${decryptedComment}` : getMessage('ticket.answers.no_value'),
 				});
 		}
 		if (reason) fieldsArray.push(fields.reason);
@@ -2031,7 +2043,7 @@ module.exports = class TicketManager {
 			},
 			target: {
 				id: ticket.id,
-				name: `${ticket.category.name} **#${ticket.number}**`,
+				name: `${ticket.category ? `${ticket.category.name} ` : ''}#${ticket.number}`,
 			},
 			userId: closedBy || this.client.user.id,
 		});

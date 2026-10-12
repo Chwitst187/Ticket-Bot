@@ -355,6 +355,13 @@ log:
     title: Ticket {verb}
     description: '{user} hat ein Ticket {verb}'
     ticket: Ticket
+    fields:
+      category: Kategorie
+      creator: Ersteller
+      action_by: Ausgeführt von
+      assigned_to: Zugewiesen an
+      closed_by: Geschlossen von
+      released_by: Freigegeben von
     verb:
       claim: übernommen
       close: geschlossen
