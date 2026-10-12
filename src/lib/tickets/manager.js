@@ -541,10 +541,13 @@ module.exports = class TicketManager {
 					.setEmoji(getMessage('buttons.close.emoji'))
 					.setLabel(getMessage('buttons.close.text')),
 				new ButtonBuilder()
-					.setCustomId(JSON.stringify({ action: 'close', force: true }))
+					.setCustomId(JSON.stringify({
+						action: 'close',
+						force: true,
+					}))
 					.setStyle(ButtonStyle.Danger)
 					.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
-					.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
+					.setLabel(getMessage('buttons.force_close.text') || 'Instant Close'),
 			);
 		}
 
@@ -559,7 +562,7 @@ module.exports = class TicketManager {
 			embeds,
 		});
 
-		
+
 		if (category.autoTag) {
 			const tag = await this.client.prisma.tag.findUnique({
 				where: {
@@ -851,6 +854,24 @@ module.exports = class TicketManager {
 			},
 			where: { id: interaction.channel.id },
 		});
+
+		if (!ticket) {
+			const settings = await this.client.prisma.guild.findUnique({ where: { id: interaction.guild.id } });
+			const getMessage = this.client.i18n.getLocale(settings?.locale || 'en-GB');
+			return await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder({
+						iconURL: interaction.guild.iconURL(),
+						text: settings?.footer,
+					})
+						.setColor(settings?.errorColour || 0xff0000)
+						.setTitle(getMessage('misc.not_ticket.title'))
+						.setDescription(getMessage('misc.not_ticket.description')),
+				],
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
 		const getMessage = this.client.i18n.getLocale(ticket.guild.locale);
 
 		if (!(await isStaff(interaction.guild, interaction.user.id))) {
@@ -868,7 +889,7 @@ module.exports = class TicketManager {
 			});
 		}
 
-		if (ticket.claimedById) {
+		if (ticket.claimedById || ticket.claimedRoleId) {
 			return await interaction.reply({
 				embeds: [
 					new ExtendedEmbedBuilder({
@@ -895,6 +916,7 @@ module.exports = class TicketManager {
 							where: { id: interaction.user.id },
 						},
 					},
+					claimedRoleId: null,
 				},
 				where: { id: interaction.channel.id },
 			});
@@ -917,7 +939,12 @@ module.exports = class TicketManager {
 				if (!newOverwrites[claimerIndex].allow.includes('ViewChannel')) newOverwrites[claimerIndex].allow.push('ViewChannel');
 				newOverwrites[claimerIndex].deny = newOverwrites[claimerIndex].deny.filter(p => p !== 'ViewChannel');
 			} else {
-				newOverwrites.push({ id: interaction.user.id, allow: ['ViewChannel'], deny: [], type: 1 });
+				newOverwrites.push({
+					allow: ['ViewChannel'],
+					deny: [],
+					id: interaction.user.id,
+					type: 1,
+				});
 			}
 		}
 
@@ -927,7 +954,12 @@ module.exports = class TicketManager {
 				newOverwrites[roleIndex].allow = newOverwrites[roleIndex].allow.filter(p => p !== 'ViewChannel');
 				if (!newOverwrites[roleIndex].deny.includes('ViewChannel')) newOverwrites[roleIndex].deny.push('ViewChannel');
 			} else {
-				newOverwrites.push({ id: roleId, allow: [], deny: ['ViewChannel'], type: 0 });
+				newOverwrites.push({
+					id: roleId,
+					allow: [],
+					deny: ['ViewChannel'],
+					type: 0,
+				});
 			}
 		}
 
@@ -938,13 +970,16 @@ module.exports = class TicketManager {
 		} catch (error) {
 			this.client.log.error(`[TicketManager] Discord overwrites claim failed: ${error.message}`);
 			await this.client.prisma.ticket.update({
-				data: { claimedBy: { disconnect: true } },
+				data: {
+					claimedBy: { disconnect: true },
+					claimedRoleId: null,
+				},
 				where: { id: interaction.channel.id },
 			});
 			return interaction.editReply({ content: 'An error occurred while updating channel permissions. The claim has been reverted.' });
 		}
 
-		const openingMessage = await interaction.channel.messages.fetch(ticket.openingMessageId);
+		const openingMessage = await interaction.channel.messages.fetch(ticket.openingMessageId).catch(() => null);
 
 		if (openingMessage && openingMessage.components.length !== 0) {
 			const components = new ActionRowBuilder();
@@ -970,19 +1005,22 @@ module.exports = class TicketManager {
 			}
 
 			if (ticket.guild.closeButton) {
-			components.addComponents(
-				new ButtonBuilder()
-					.setCustomId(JSON.stringify({ action: 'close' }))
-					.setStyle(ButtonStyle.Danger)
-					.setEmoji(getMessage('buttons.close.emoji'))
-					.setLabel(getMessage('buttons.close.text')),
-				new ButtonBuilder()
-					.setCustomId(JSON.stringify({ action: 'close', force: true }))
-					.setStyle(ButtonStyle.Danger)
-					.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
-					.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
-			);
-		}
+				components.addComponents(
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({ action: 'close' }))
+						.setStyle(ButtonStyle.Danger)
+						.setEmoji(getMessage('buttons.close.emoji'))
+						.setLabel(getMessage('buttons.close.text')),
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({
+							action: 'close',
+							force: true,
+						}))
+						.setStyle(ButtonStyle.Danger)
+						.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
+						.setLabel(getMessage('buttons.force_close.text') || 'Instant Close'),
+				);
+			}
 
 			await openingMessage.edit({ components: [components] });
 		}
@@ -992,6 +1030,391 @@ module.exports = class TicketManager {
 				new ExtendedEmbedBuilder()
 					.setColor(ticket.guild.primaryColour)
 					.setDescription(getMessage('ticket.claimed', { user: interaction.user.toString() })),
+			],
+		});
+
+		logTicketEvent(this.client, {
+			action: 'claim',
+			target: {
+				id: ticket.id,
+				name: interaction.channel.toString(),
+			},
+			userId: interaction.user.id,
+		});
+	}
+
+	/**
+	 * @param {import("discord.js").ChatInputCommandInteraction} interaction
+	 */
+	async assign(interaction) {
+		const ticket = await this.client.prisma.ticket.findUnique({
+			include: {
+				_count: { select: { questionAnswers: true } },
+				category: true,
+				guild: true,
+			},
+			where: { id: interaction.channel.id },
+		});
+
+		if (!ticket) {
+			const settings = await this.client.prisma.guild.findUnique({ where: { id: interaction.guild.id } });
+			const getMessage = this.client.i18n.getLocale(settings?.locale || 'en-GB');
+			return await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder({
+						iconURL: interaction.guild.iconURL(),
+						text: settings?.footer,
+					})
+						.setColor(settings?.errorColour || 0xff0000)
+						.setTitle(getMessage('misc.not_ticket.title'))
+						.setDescription(getMessage('misc.not_ticket.description')),
+				],
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
+		const getMessage = this.client.i18n.getLocale(ticket.guild.locale);
+
+		if (!(await isStaff(interaction.guild, interaction.user.id))) {
+			return await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder({
+						iconURL: interaction.guild.iconURL(),
+						text: ticket.guild.footer,
+					})
+						.setColor(ticket.guild.errorColour)
+						.setTitle(getMessage('commands.slash.assign.not_staff.title'))
+						.setDescription(getMessage('commands.slash.assign.not_staff.description')),
+				],
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
+		const targetRole = interaction.options.getRole('target');
+		const targetUser = interaction.options.getUser('target');
+
+		if (!targetRole && !targetUser) {
+			return await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder({
+						iconURL: interaction.guild.iconURL(),
+						text: ticket.guild.footer,
+					})
+						.setColor(ticket.guild.errorColour)
+						.setTitle(getMessage('commands.slash.assign.invalid_target.title'))
+						.setDescription(getMessage('commands.slash.assign.invalid_target.description')),
+				],
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
+		if (targetRole) {
+			if (targetRole.id === interaction.guild.id) {
+				return await interaction.reply({
+					embeds: [
+						new ExtendedEmbedBuilder({
+							iconURL: interaction.guild.iconURL(),
+							text: ticket.guild.footer,
+						})
+							.setColor(ticket.guild.errorColour)
+							.setTitle(getMessage('commands.slash.assign.target_is_everyone.title'))
+							.setDescription(getMessage('commands.slash.assign.target_is_everyone.description')),
+					],
+					flags: MessageFlags.Ephemeral,
+				});
+			}
+
+			if (ticket.claimedRoleId === targetRole.id) {
+				return await interaction.reply({
+					embeds: [
+						new ExtendedEmbedBuilder({
+							iconURL: interaction.guild.iconURL(),
+							text: ticket.guild.footer,
+						})
+							.setColor(ticket.guild.errorColour)
+							.setTitle(getMessage('commands.slash.assign.already_assigned_role.title'))
+							.setDescription(getMessage('commands.slash.assign.already_assigned_role.description')),
+					],
+					flags: MessageFlags.Ephemeral,
+				});
+			}
+		} else if (targetUser) {
+			if (targetUser.bot) {
+				return await interaction.reply({
+					embeds: [
+						new ExtendedEmbedBuilder({
+							iconURL: interaction.guild.iconURL(),
+							text: ticket.guild.footer,
+						})
+							.setColor(ticket.guild.errorColour)
+							.setTitle(getMessage('commands.slash.assign.invalid_target.title'))
+							.setDescription(getMessage('commands.slash.assign.invalid_target.description')),
+					],
+					flags: MessageFlags.Ephemeral,
+				});
+			}
+
+			if (targetUser.id === ticket.createdById) {
+				return await interaction.reply({
+					embeds: [
+						new ExtendedEmbedBuilder({
+							iconURL: interaction.guild.iconURL(),
+							text: ticket.guild.footer,
+						})
+							.setColor(ticket.guild.errorColour)
+							.setTitle(getMessage('commands.slash.assign.target_is_creator.title'))
+							.setDescription(getMessage('commands.slash.assign.target_is_creator.description')),
+					],
+					flags: MessageFlags.Ephemeral,
+				});
+			}
+
+			if (!(await isStaff(interaction.guild, targetUser.id))) {
+				return await interaction.reply({
+					embeds: [
+						new ExtendedEmbedBuilder({
+							iconURL: interaction.guild.iconURL(),
+							text: ticket.guild.footer,
+						})
+							.setColor(ticket.guild.errorColour)
+							.setTitle(getMessage('commands.slash.assign.target_not_staff.title'))
+							.setDescription(getMessage('commands.slash.assign.target_not_staff.description')),
+					],
+					flags: MessageFlags.Ephemeral,
+				});
+			}
+
+			if (ticket.claimedById === targetUser.id) {
+				return await interaction.reply({
+					embeds: [
+						new ExtendedEmbedBuilder({
+							iconURL: interaction.guild.iconURL(),
+							text: ticket.guild.footer,
+						})
+							.setColor(ticket.guild.errorColour)
+							.setTitle(getMessage('commands.slash.assign.already_assigned_user.title'))
+							.setDescription(getMessage('commands.slash.assign.already_assigned_user.description')),
+					],
+					flags: MessageFlags.Ephemeral,
+				});
+			}
+		}
+
+		await interaction.deferReply();
+
+		const previousClaimedById = ticket.claimedById;
+		const previousClaimedRoleId = ticket.claimedRoleId;
+
+		const dbStart = Date.now();
+		try {
+			await this.client.prisma.ticket.update({
+				data: targetUser
+					? {
+						claimedBy: {
+							connectOrCreate: {
+								create: { id: targetUser.id },
+								where: { id: targetUser.id },
+							},
+						},
+						claimedRoleId: null,
+					}
+					: {
+						...(previousClaimedById ? { claimedBy: { disconnect: true } } : {}),
+						claimedRoleId: targetRole.id,
+					},
+				where: { id: interaction.channel.id },
+			});
+			this.client.log.info(`[TicketManager] DB assign update took ${Date.now() - dbStart}ms`);
+		} catch (error) {
+			this.client.log.error(`[TicketManager] DB assign failed: ${error.message}`);
+			return interaction.editReply({ content: 'An error occurred while assigning the ticket in the database.' });
+		}
+
+		const newOverwrites = interaction.channel.permissionOverwrites.cache.map(overwrite => ({
+			id: overwrite.id,
+			allow: overwrite.allow.toArray(),
+			deny: overwrite.deny.toArray(),
+			type: overwrite.type,
+		}));
+
+		if (previousClaimedById && previousClaimedById !== ticket.createdById && (!targetUser || previousClaimedById !== targetUser.id)) {
+			const prevClaimerIndex = newOverwrites.findIndex(o => o.id === previousClaimedById);
+			if (prevClaimerIndex !== -1) {
+				newOverwrites[prevClaimerIndex].allow = newOverwrites[prevClaimerIndex].allow.filter(p => p !== 'ViewChannel');
+				if (newOverwrites[prevClaimerIndex].allow.length === 0 && newOverwrites[prevClaimerIndex].deny.length === 0) {
+					newOverwrites.splice(prevClaimerIndex, 1);
+				}
+			}
+		}
+
+		if (previousClaimedRoleId &&
+			(!targetRole || previousClaimedRoleId !== targetRole.id) &&
+			!ticket.category.staffRoles.includes(previousClaimedRoleId)) {
+			const prevRoleIndex = newOverwrites.findIndex(o => o.id === previousClaimedRoleId);
+			if (prevRoleIndex !== -1) {
+				newOverwrites[prevRoleIndex].allow = newOverwrites[prevRoleIndex].allow.filter(p => p !== 'ViewChannel');
+				if (newOverwrites[prevRoleIndex].allow.length === 0 && newOverwrites[prevRoleIndex].deny.length === 0) {
+					newOverwrites.splice(prevRoleIndex, 1);
+				}
+			}
+		}
+
+		if (targetUser) {
+			if (targetUser.id !== ticket.createdById) {
+				const claimerIndex = newOverwrites.findIndex(o => o.id === targetUser.id);
+				if (claimerIndex !== -1) {
+					if (!newOverwrites[claimerIndex].allow.includes('ViewChannel')) newOverwrites[claimerIndex].allow.push('ViewChannel');
+					newOverwrites[claimerIndex].deny = newOverwrites[claimerIndex].deny.filter(p => p !== 'ViewChannel');
+				} else {
+					newOverwrites.push({
+						id: targetUser.id,
+						allow: ['ViewChannel'],
+						deny: [],
+						type: 1,
+					});
+				}
+			}
+
+			for (const roleId of ticket.category.staffRoles) {
+				const roleIndex = newOverwrites.findIndex(o => o.id === roleId);
+				if (roleIndex !== -1) {
+					newOverwrites[roleIndex].allow = newOverwrites[roleIndex].allow.filter(p => p !== 'ViewChannel');
+					if (!newOverwrites[roleIndex].deny.includes('ViewChannel')) newOverwrites[roleIndex].deny.push('ViewChannel');
+				} else {
+					newOverwrites.push({
+						id: roleId,
+						allow: [],
+						deny: ['ViewChannel'],
+						type: 0,
+					});
+				}
+			}
+		} else if (targetRole) {
+			for (const roleId of ticket.category.staffRoles) {
+				const roleIndex = newOverwrites.findIndex(o => o.id === roleId);
+				if (roleIndex !== -1) {
+					if (roleId === targetRole.id) {
+						newOverwrites[roleIndex].deny = newOverwrites[roleIndex].deny.filter(p => p !== 'ViewChannel');
+						if (!newOverwrites[roleIndex].allow.includes('ViewChannel')) newOverwrites[roleIndex].allow.push('ViewChannel');
+					} else {
+						newOverwrites[roleIndex].allow = newOverwrites[roleIndex].allow.filter(p => p !== 'ViewChannel');
+						if (!newOverwrites[roleIndex].deny.includes('ViewChannel')) newOverwrites[roleIndex].deny.push('ViewChannel');
+					}
+				} else {
+					newOverwrites.push({
+						id: roleId,
+						allow: roleId === targetRole.id ? ['ViewChannel'] : [],
+						deny: roleId === targetRole.id ? [] : ['ViewChannel'],
+						type: 0,
+					});
+				}
+			}
+
+			if (!ticket.category.staffRoles.includes(targetRole.id)) {
+				const targetRoleIndex = newOverwrites.findIndex(o => o.id === targetRole.id);
+				if (targetRoleIndex !== -1) {
+					newOverwrites[targetRoleIndex].deny = newOverwrites[targetRoleIndex].deny.filter(p => p !== 'ViewChannel');
+					if (!newOverwrites[targetRoleIndex].allow.includes('ViewChannel')) newOverwrites[targetRoleIndex].allow.push('ViewChannel');
+				} else {
+					newOverwrites.push({
+						id: targetRole.id,
+						allow: ['ViewChannel'],
+						deny: [],
+						type: 0,
+					});
+				}
+			}
+		}
+
+		const discordStart = Date.now();
+		try {
+			await interaction.channel.permissionOverwrites.set(
+				newOverwrites,
+				`Ticket assigned to ${targetUser ? targetUser.tag : targetRole.name} by ${interaction.user.tag}`,
+			);
+			this.client.log.info(`[TicketManager] Discord overwrites assign update took ${Date.now() - discordStart}ms`);
+		} catch (error) {
+			this.client.log.error(`[TicketManager] Discord overwrites assign failed: ${error.message}`);
+			await this.client.prisma.ticket.update({
+				data: {
+					...(previousClaimedById
+						? {
+							claimedBy: {
+								connectOrCreate: {
+									create: { id: previousClaimedById },
+									where: { id: previousClaimedById },
+								},
+							},
+						}
+						: { claimedBy: { disconnect: true } }),
+					claimedRoleId: previousClaimedRoleId || null,
+				},
+				where: { id: interaction.channel.id },
+			});
+			return interaction.editReply({ content: 'An error occurred while updating channel permissions. The assignment has been reverted.' });
+		}
+
+		const openingMessage = await interaction.channel.messages.fetch(ticket.openingMessageId).catch(() => null);
+
+		if (openingMessage && openingMessage.components.length !== 0) {
+			const components = new ActionRowBuilder();
+
+			if (ticket.topic || ticket._count.questionAnswers !== 0) {
+				components.addComponents(
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({ action: 'edit' }))
+						.setStyle(ButtonStyle.Secondary)
+						.setEmoji(getMessage('buttons.edit.emoji'))
+						.setLabel(getMessage('buttons.edit.text')),
+				);
+			}
+
+			if (ticket.guild.claimButton && ticket.category.claiming) {
+				components.addComponents(
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({ action: 'unclaim' }))
+						.setStyle(ButtonStyle.Secondary)
+						.setEmoji(getMessage('buttons.unclaim.emoji'))
+						.setLabel(getMessage('buttons.unclaim.text')),
+				);
+			}
+
+			if (ticket.guild.closeButton) {
+				components.addComponents(
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({ action: 'close' }))
+						.setStyle(ButtonStyle.Danger)
+						.setEmoji(getMessage('buttons.close.emoji'))
+						.setLabel(getMessage('buttons.close.text')),
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({
+							action: 'close',
+							force: true,
+						}))
+						.setStyle(ButtonStyle.Danger)
+						.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
+						.setLabel(getMessage('buttons.force_close.text') || 'Instant Close'),
+				);
+			}
+
+			await openingMessage.edit({ components: [components] });
+		}
+
+		await interaction.editReply({
+			embeds: [
+				new ExtendedEmbedBuilder()
+					.setColor(ticket.guild.primaryColour)
+					.setDescription(
+						targetUser
+							? getMessage('ticket.assigned_user', {
+								target: targetUser.toString(),
+								user: interaction.user.toString(),
+							})
+							: getMessage('ticket.assigned_role', {
+								target: targetRole.toString(),
+								user: interaction.user.toString(),
+							}),
+					),
 			],
 		});
 
@@ -1017,9 +1440,31 @@ module.exports = class TicketManager {
 			},
 			where: { id: interaction.channel.id },
 		});
+
+		if (!ticket) {
+			const settings = await this.client.prisma.guild.findUnique({ where: { id: interaction.guild.id } });
+			const getMessage = this.client.i18n.getLocale(settings?.locale || 'en-GB');
+			return await interaction.reply({
+				embeds: [
+					new ExtendedEmbedBuilder({
+						iconURL: interaction.guild.iconURL(),
+						text: settings?.footer,
+					})
+						.setColor(settings?.errorColour || 0xff0000)
+						.setTitle(getMessage('misc.not_ticket.title'))
+						.setDescription(getMessage('misc.not_ticket.description')),
+				],
+				flags: MessageFlags.Ephemeral,
+			});
+		}
+
 		const getMessage = this.client.i18n.getLocale(ticket.guild.locale);
 
-		if (!(await isStaff(interaction.guild, interaction.user.id))) {
+		const member = interaction.member;
+		const hasClaimedRole = ticket.claimedRoleId && member && member.roles && member.roles.cache.has(ticket.claimedRoleId);
+		const staff = await isStaff(interaction.guild, interaction.user.id);
+
+		if (!staff && !hasClaimedRole) {
 			return await interaction.reply({
 				embeds: [
 					new ExtendedEmbedBuilder({
@@ -1034,7 +1479,7 @@ module.exports = class TicketManager {
 			});
 		}
 
-		if (!ticket.claimedById) {
+		if (!ticket.claimedById && !ticket.claimedRoleId) {
 			return await interaction.reply({
 				embeds: [
 					new ExtendedEmbedBuilder({
@@ -1051,10 +1496,16 @@ module.exports = class TicketManager {
 
 		await interaction.deferReply();
 
+		const claimedById = ticket.claimedById;
+		const claimedRoleId = ticket.claimedRoleId;
+
 		const dbStart = Date.now();
 		try {
 			await this.client.prisma.ticket.update({
-				data: { claimedBy: { disconnect: true } },
+				data: {
+					claimedBy: { disconnect: true },
+					claimedRoleId: null,
+				},
 				where: { id: interaction.channel.id },
 			});
 			this.client.log.info(`[TicketManager] DB release update took ${Date.now() - dbStart}ms`);
@@ -1070,7 +1521,6 @@ module.exports = class TicketManager {
 			type: overwrite.type,
 		}));
 
-		const claimedById = ticket.claimedById;
 		if (claimedById && claimedById !== ticket.createdById) {
 			const claimerIndex = newOverwrites.findIndex(o => o.id === claimedById);
 			if (claimerIndex !== -1) {
@@ -1081,13 +1531,28 @@ module.exports = class TicketManager {
 			}
 		}
 
+		if (claimedRoleId && !ticket.category.staffRoles.includes(claimedRoleId)) {
+			const roleIndex = newOverwrites.findIndex(o => o.id === claimedRoleId);
+			if (roleIndex !== -1) {
+				newOverwrites[roleIndex].allow = newOverwrites[roleIndex].allow.filter(p => p !== 'ViewChannel');
+				if (newOverwrites[roleIndex].allow.length === 0 && newOverwrites[roleIndex].deny.length === 0) {
+					newOverwrites.splice(roleIndex, 1);
+				}
+			}
+		}
+
 		for (const roleId of ticket.category.staffRoles) {
 			const roleIndex = newOverwrites.findIndex(o => o.id === roleId);
 			if (roleIndex !== -1) {
 				newOverwrites[roleIndex].deny = newOverwrites[roleIndex].deny.filter(p => p !== 'ViewChannel');
 				if (!newOverwrites[roleIndex].allow.includes('ViewChannel')) newOverwrites[roleIndex].allow.push('ViewChannel');
 			} else {
-				newOverwrites.push({ id: roleId, allow: ['ViewChannel'], deny: [], type: 0 });
+				newOverwrites.push({
+					id: roleId,
+					allow: ['ViewChannel'],
+					deny: [],
+					type: 0,
+				});
 			}
 		}
 
@@ -1099,19 +1564,24 @@ module.exports = class TicketManager {
 			this.client.log.error(`[TicketManager] Discord overwrites release failed: ${error.message}`);
 			await this.client.prisma.ticket.update({
 				data: {
-					claimedBy: {
-						connectOrCreate: {
-							create: { id: claimedById },
-							where: { id: claimedById },
-						},
-					},
+					...(claimedById
+						? {
+							claimedBy: {
+								connectOrCreate: {
+									create: { id: claimedById },
+									where: { id: claimedById },
+								},
+							},
+						}
+						: {}),
+					claimedRoleId: claimedRoleId || null,
 				},
 				where: { id: interaction.channel.id },
 			});
 			return interaction.editReply({ content: 'An error occurred while updating channel permissions. The release has been reverted.' });
 		}
 
-		const openingMessage = await interaction.channel.messages.fetch(ticket.openingMessageId);
+		const openingMessage = await interaction.channel.messages.fetch(ticket.openingMessageId).catch(() => null);
 
 		if (openingMessage && openingMessage.components.length !== 0) {
 			const components = new ActionRowBuilder();
@@ -1137,19 +1607,22 @@ module.exports = class TicketManager {
 			}
 
 			if (ticket.guild.closeButton) {
-			components.addComponents(
-				new ButtonBuilder()
-					.setCustomId(JSON.stringify({ action: 'close' }))
-					.setStyle(ButtonStyle.Danger)
-					.setEmoji(getMessage('buttons.close.emoji'))
-					.setLabel(getMessage('buttons.close.text')),
-				new ButtonBuilder()
-					.setCustomId(JSON.stringify({ action: 'close', force: true }))
-					.setStyle(ButtonStyle.Danger)
-					.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
-					.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
-			);
-		}
+				components.addComponents(
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({ action: 'close' }))
+						.setStyle(ButtonStyle.Danger)
+						.setEmoji(getMessage('buttons.close.emoji'))
+						.setLabel(getMessage('buttons.close.text')),
+					new ButtonBuilder()
+						.setCustomId(JSON.stringify({
+							action: 'close',
+							force: true,
+						}))
+						.setStyle(ButtonStyle.Danger)
+						.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
+						.setLabel(getMessage('buttons.force_close.text') || 'Instant Close'),
+				);
+			}
 
 			await openingMessage.edit({ components: [components] });
 		}

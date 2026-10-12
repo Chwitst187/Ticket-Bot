@@ -162,7 +162,7 @@ module.exports = class extends Listener {
 						}
 
 						if (ticket.guild.claimButton && ticket.category.claiming) {
-							const isClaimed = !!ticket.claimedById;
+							const isClaimed = Boolean(ticket.claimedById || ticket.claimedRoleId);
 							components.addComponents(
 								new ButtonBuilder()
 									.setCustomId(JSON.stringify({ action: isClaimed ? 'unclaim' : 'claim' }))

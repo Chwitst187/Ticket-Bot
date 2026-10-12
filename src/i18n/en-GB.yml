@@ -67,6 +67,34 @@ commands:
       success:
         description: "{member} has been added to {ticket}."
         title: ✅ Added
+    assign:
+      description: Assign a ticket to a role or user
+      name: assign
+      options:
+        target:
+          name: target
+          description: The role or user to assign the ticket to
+      not_staff:
+        title: ❌ Error
+        description: Only staff members can assign tickets.
+      invalid_target:
+        title: ❌ Invalid Target
+        description: Please select a valid role or user.
+      target_is_creator:
+        title: ❌ Error
+        description: Tickets cannot be assigned to the ticket creator.
+      target_not_staff:
+        title: ❌ Error
+        description: The selected user is not a staff member.
+      target_is_everyone:
+        title: ❌ Error
+        description: Tickets cannot be assigned to the @everyone role.
+      already_assigned_user:
+        title: ℹ️ Already Assigned
+        description: This ticket is already assigned to this user.
+      already_assigned_role:
+        title: ℹ️ Already Assigned
+        description: This ticket is already assigned to this role.
     claim:
       description: Claim a ticket
       name: claim
@@ -444,6 +472,8 @@ modals:
 ticket:
   answers:
     no_value: "*No response*"
+  assigned_user: 🙌 {user} has assigned this ticket to {target}.
+  assigned_role: 🙌 {user} has assigned this ticket to the role {target}.
   claimed: 🙌 {user} has claimed this ticket.
   close:
     closed:

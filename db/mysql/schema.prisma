@@ -193,6 +193,7 @@ model Ticket {
     category            Category?         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
     categoryId          Int?
     claimedBy           User?             @relation(name: "TicketsClaimedByUser", fields: [claimedById], references: [id])
+    claimedRoleId       String?           @db.VarChar(19)
     claimedById         String?           @db.VarChar(19)
     closedAt            DateTime?
     closedBy            User?             @relation(name: "TicketsClosedByUser", fields: [closedById], references: [id])

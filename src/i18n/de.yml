@@ -148,6 +148,34 @@ commands:
         references:
           name: referenzen
           description: Die Nummer eines zugehörigen Tickets
+    assign:
+      description: Ein Ticket einer Rolle oder einem Nutzer zuweisen
+      name: zuweisen
+      options:
+        target:
+          name: ziel
+          description: Die Rolle oder der Nutzer, dem das Ticket zugewiesen werden soll
+      not_staff:
+        title: ❌ Fehler
+        description: Nur Teammitglieder können Tickets zuweisen.
+      invalid_target:
+        title: ❌ Ungültiges Ziel
+        description: Bitte wähle eine gültige Rolle oder einen gültigen Nutzer aus.
+      target_is_creator:
+        title: ❌ Fehler
+        description: Tickets können nicht dem Ersteller zugewiesen werden.
+      target_not_staff:
+        title: ❌ Fehler
+        description: Der ausgewählte Nutzer ist kein Teammitglied.
+      target_is_everyone:
+        title: ❌ Fehler
+        description: Tickets können nicht der @everyone-Rolle zugewiesen werden.
+      already_assigned_user:
+        title: ℹ️ Bereits zugewiesen
+        description: Dieses Ticket ist bereits diesem Nutzer zugewiesen.
+      already_assigned_role:
+        title: ℹ️ Bereits zugewiesen
+        description: Dieses Ticket ist bereits dieser Rolle zugewiesen.
     claim:
       description: Ticket übernehmen
       name: übernehmen
@@ -467,6 +495,8 @@ ticket:
       number: Nummer
       topic: Thema
     title: ℹ️ Referenz
+  assigned_user: 🙌 {user} hat dieses Ticket {target} zugewiesen.
+  assigned_role: 🙌 {user} hat dieses Ticket der Rolle {target} zugewiesen.
   claimed: 🙌 {user} hat dieses Ticket übernommen.
   released: ♻️ {user} hat das Ticket freigegeben.
   closing_soon:
