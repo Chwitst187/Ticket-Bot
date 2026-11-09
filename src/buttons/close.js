@@ -34,7 +34,9 @@ module.exports = class CloseButton extends Button {
 				});
 			}
 			const getMessage = client.i18n.getLocale(ticket.guild.locale);
-			const { ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+			const {
+				ModalBuilder, ActionRowBuilder, TextInputBuilder, TextInputStyle,
+			} = require('discord.js');
 			const creator = await client.users.fetch(ticket.createdById).catch(() => null);
 			const uName = creator ? (creator.displayName || creator.username) : null;
 			let modalTitle = uName
@@ -56,8 +58,8 @@ module.exports = class CloseButton extends Button {
 							.setStyle(TextInputStyle.Short)
 							.setValue('N/A')
 							.setPlaceholder('Type a reason or leave as N/A')
-							.setRequired(true)
-					)
+							.setRequired(true),
+					),
 				);
 			return await interaction.showModal(modal);
 		} else if (id.accepted === undefined) {

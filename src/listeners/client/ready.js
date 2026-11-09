@@ -1,4 +1,6 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const {
+	ActionRowBuilder, ButtonBuilder, ButtonStyle,
+} = require('discord.js');
 const { Listener } = require('@eartharoid/dbf');
 const ms = require('ms');
 const sync = require('../../lib/sync');
@@ -130,20 +132,24 @@ module.exports = class extends Listener {
 			try {
 				const openTickets = await client.prisma.ticket.findMany({
 					where: { open: true },
-					include: { category: true, guild: true, _count: { select: { questionAnswers: true } } }
+					include: {
+						category: true,
+						guild: true,
+						_count: { select: { questionAnswers: true } },
+					},
 				});
 
 				let updated = 0;
 				for (const ticket of openTickets) {
 					try {
-							const channel = await client.channels.fetch(ticket.id).catch(() => null);
+						const channel = await client.channels.fetch(ticket.id).catch(() => null);
 						if (!channel) continue;
 
 						const openingMessage = await channel.messages.fetch(ticket.openingMessageId).catch(() => null);
 						if (!openingMessage || openingMessage.components.length === 0) continue;
 
-						const hasInstantClose = openingMessage.components.some(row => 
-							row.components.some(btn => btn.customId && btn.customId.includes('"force":true'))
+						const hasInstantClose = openingMessage.components.some(row =>
+							row.components.some(btn => btn.customId && btn.customId.includes('"force":true')),
 						);
 						if (hasInstantClose) continue;
 
@@ -180,10 +186,13 @@ module.exports = class extends Listener {
 									.setEmoji(getMessage('buttons.close.emoji'))
 									.setLabel(getMessage('buttons.close.text')),
 								new ButtonBuilder()
-									.setCustomId(JSON.stringify({ action: 'close', force: true }))
+									.setCustomId(JSON.stringify({
+										action: 'close',
+										force: true,
+									}))
 									.setStyle(ButtonStyle.Danger)
 									.setEmoji(getMessage('buttons.force_close.emoji') || '⚡')
-									.setLabel(getMessage('buttons.force_close.text') || 'Instant Close')
+									.setLabel(getMessage('buttons.force_close.text') || 'Instant Close'),
 							);
 						}
 

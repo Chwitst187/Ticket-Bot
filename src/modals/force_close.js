@@ -18,7 +18,7 @@ module.exports = class ForceCloseModal extends Modal {
 	async run(id, interaction) {
 		/** @type {import("client")} */
 		const client = this.client;
-		
+
 		const ticket = await client.tickets.getTicket(interaction.channel.id);
 		const getMessage = client.i18n.getLocale(ticket.guild.locale);
 

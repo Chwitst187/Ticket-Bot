@@ -32,22 +32,37 @@ module.exports = class StaffStatsSlashCommand extends SlashCommand {
 			});
 		}
 		const tickets = await client.prisma.ticket.findMany({
-			select: { claimedById: true, closedById: true },
+			select: {
+				claimedById: true,
+				closedById: true,
+			},
 			where: { guildId: interaction.guild.id },
 		});
 		const statsMap = {};
 		for (const t of tickets) {
 			if (t.claimedById) {
-				if (!statsMap[t.claimedById]) statsMap[t.claimedById] = { userId: t.claimedById, claimed: 0, closed: 0 };
+				if (!statsMap[t.claimedById]) {
+					statsMap[t.claimedById] = {
+						userId: t.claimedById,
+						claimed: 0,
+						closed: 0,
+					};
+				}
 				statsMap[t.claimedById].claimed++;
 			}
 			if (t.closedById) {
-				if (!statsMap[t.closedById]) statsMap[t.closedById] = { userId: t.closedById, claimed: 0, closed: 0 };
+				if (!statsMap[t.closedById]) {
+					statsMap[t.closedById] = {
+						userId: t.closedById,
+						claimed: 0,
+						closed: 0,
+					};
+				}
 				statsMap[t.closedById].closed++;
 			}
 		}
 		const entries = Object.values(statsMap);
-		let description = entries.length === 0 ? 'No staff activity recorded yet.' : entries.map(e => '<@' + e.userId + '> — **Claimed:** ' + e.claimed + ', **Closed:** ' + e.closed).join('\n');
+		const description = entries.length === 0 ? 'No staff activity recorded yet.' : entries.map(e => '<@' + e.userId + '> — **Claimed:** ' + e.claimed + ', **Closed:** ' + e.closed).join('\n');
 		const embed = new ExtendedEmbedBuilder({
 			iconURL: interaction.guild.iconURL(),
 			text: settings?.footer,
