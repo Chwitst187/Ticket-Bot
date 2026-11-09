@@ -150,7 +150,7 @@ module.exports.post = fastify => ({
 						if (emoji_errors) {
 							const invalid_name = emoji_errors[0]?.message?.match(/Value "(.*)" is not snowflake/)?.[1];
 							if (invalid_name) {
-								const url = `${process.env.HTTP_EXTERNAL}/settings/${guild.id}/categories/${category.id}`;
+								const url = `${process.env.HTTP_EXTERNAL}/${guild.id}/categories/${category.id}`;
 								human_errors.push({
 									message: `The emoji for the \`${category.name}\` category is invalid: \`${invalid_name}\`. <a href="${url}" target="_blank">Click here</a> to open the category's settings page in a new tab.`,
 									type: 'invalid_emoji',

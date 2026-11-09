@@ -18,7 +18,7 @@
 <div class="w-full bg-white p-4 shadow-sm dark:bg-gray-800">
 	<div class="grid grid-cols-1 gap-4 sm:mx-8 md:grid-cols-2">
 		<div>
-			<a href={base + '/settings'} class="flex justify-center md:justify-start">
+			<a href={base + '/'} class="flex justify-center md:justify-start">
 				<!-- <img src="/logo.png" class="h-8" alt="Discord Tickets" /> -->
 				<img src="/assets/wordmark-{theme}.png" class="h-8" alt="Discord Tickets" />
 			</a>

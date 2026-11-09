@@ -14,7 +14,7 @@ export async function load({ cookies, fetch, request, url }) {
 	if (url.pathname !== '/login') {
 		if (response.status === 401) {
 			let qs = `r=${encodeURIComponent(url.pathname + url.search)}`;
-			if (url.pathname.startsWith('/settings')) {
+			if (url.pathname.split('/').length > 1 && url.pathname.split('/')[1] !== '' && url.pathname.split('/')[1] !== 'invite' && url.pathname.split('/')[1] !== 'login' && url.pathname.split('/')[1] !== 'view') {
 				qs += '&role=admin';
 			}
 			redirect(307, `/login?${qs}`);

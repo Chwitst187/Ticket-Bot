@@ -36,7 +36,7 @@ module.exports.get = () => ({
 			method: 'POST',
 		})).json();
 
-		let redirect = (data.guild?.id && `/settings/${data.guild?.id}`) || state.get('redirect') || '/';
+		let redirect = (data.guild?.id && `/${data.guild?.id}`) || state.get('redirect') || '/';
 
 		if (!pattern.test(redirect)) redirect = '/';
 
