@@ -57,7 +57,7 @@ module.exports = class ClaimSlashCommand extends SlashCommand {
 				{
 					inline: true,
 					name: getMessage('commands.slash.help.response.settings'),
-					value: '> ' + process.env.HTTP_EXTERNAL,
+					value: '> ' + process.env.HTTP_EXTERNAL + '/settings',
 				},
 			);
 		}

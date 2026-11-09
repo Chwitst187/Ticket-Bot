@@ -9,6 +9,6 @@ module.exports = class extends StdinCommand {
 	}
 
 	async run() {
-		this.client.log.info.settings(process.env.HTTP_EXTERNAL);
+		this.client.log.info.settings(process.env.HTTP_EXTERNAL + '/settings');
 	}
 };

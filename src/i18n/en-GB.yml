@@ -243,6 +243,16 @@ commands:
       success:
         description: The ticket channel has been renamed to `{name}`.
         title: Channel renamed
+    settings:
+      dashboard: Dashboard
+      description: Open the bot settings dashboard
+      description_text: "Configure settings for **{guild}** in the web dashboard:\n\n> 🔗 **Server Settings:** [{settingsUrl}]({settingsUrl})\n> 🌐 **Dashboard:** [{dashboardUrl}]({dashboardUrl})"
+      name: settings
+      not_staff:
+        description: Only staff members and administrators can access the settings dashboard.
+        title: ❌ Error
+      server_settings: Server Settings
+      title: ⚙️ Bot Settings
     tag:
       description: Use a tag
       name: tag

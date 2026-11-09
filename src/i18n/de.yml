@@ -273,6 +273,16 @@ commands:
       transferred: 📨 {user} hat dieses Ticket an {to} übertragen.
       description: Eine Ticket Eigentümerschaft an ein anderes Mitglied 
         übertragen
+    settings:
+      dashboard: Dashboard
+      description: Öffne das Bot-Einstellungen-Dashboard
+      description_text: "Konfiguriere die Einstellungen für **{guild}** im Web-Dashboard:\n\n> 🔗 **Server-Einstellungen:** [{settingsUrl}]({settingsUrl})\n> 🌐 **Dashboard:** [{dashboardUrl}]({dashboardUrl})"
+      name: settings
+      not_staff:
+        description: Nur Teammitglieder und Administratoren können auf das Einstellungen-Dashboard zugreifen.
+        title: ❌ Fehler
+      server_settings: Server-Einstellungen
+      title: ⚙️ Bot-Einstellungen
     tag:
       options:
         for:

@@ -1,4 +1,6 @@
 <script>
+	import { base } from '$app/paths';
+	import { page } from '$app/stores';
 	import emoji from 'emoji-name-map';
 	import { browser } from '$app/environment';
 	/** @type {{data: import('./$types').PageData}} */
@@ -10,7 +12,7 @@
 <h1 class="m-4 text-center text-4xl font-bold">Categories</h1>
 <div class="m-2 mx-auto max-w-lg p-4">
 	<div class="grid grid-cols-1 gap-4">
-		<a href="./categories/new">
+		<a href={`${base}/settings/${$page.params.guild}/categories/new`}>
 			<div
 				class="link rounded-md bg-gray-100 p-4 text-center text-lg font-semibold shadow-sm dark:bg-gray-800"
 			>
@@ -18,7 +20,7 @@
 			</div>
 		</a>
 		{#each categories as category}
-			<a href={`./categories/${category.id}`}>
+			<a href={`${base}/settings/${$page.params.guild}/categories/${category.id}`}>
 				<div
 					class="link group flex flex-col-reverse gap-1 rounded-md bg-gray-100 p-4 shadow-sm dark:bg-gray-800 md:flex-row-reverse md:justify-between"
 				>
