@@ -23,7 +23,13 @@ module.exports = class extends Listener {
 		});
 
 		try {
-			const commandData = client.commands.components.map(c => c.toJSON());
+			const commandData = client.commands.components.map(c => {
+				const json = c.toJSON();
+				if (c.type === 1 || !c.type) {
+					json.options = Array.isArray(json.options) ? json.options : [];
+				}
+				return json;
+			});
 			await guild.commands.set(commandData);
 			client.log.info(`Synced commands to new guild "${guild.name}"`);
 		} catch (err) {

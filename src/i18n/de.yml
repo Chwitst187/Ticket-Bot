@@ -277,10 +277,10 @@ commands:
       name: settings
       description: Zeige und konfiguriere alle Bot-Einstellungen für diesen Server
       title: "⚙️ Einstellungen • {guild}"
-      description_text: "Übersicht aller Ticket- und Bot-Einstellungen für **{guild}**.\nKlicke auf die Buttons unten oder Links, um Einstellungen im Web-Dashboard zu bearbeiten:\n\n> ⚙️ [Server-Einstellungen]({settingsUrl}) • 📂 [Kategorien]({categoriesUrl}) • 📋 [Panels]({panelsUrl}) • 🏷️ [Tags]({tagsUrl}) • 🌐 [Dashboard]({dashboardUrl})"
+      description_text: "Übersicht aller Ticket- und Bot-Einstellungen für **{guild}**.\nWähle im Dropdown-Menü einen Bereich aus oder nutze die Buttons zum Umschalten von Optionen."
       not_staff:
         title: ❌ Fehler
-        description: Nur Teammitglieder und Administratoren können auf das Einstellungen-Dashboard zugreifen.
+        description: Nur Teammitglieder und Administratoren können auf die Einstellungen zugreifen.
       buttons:
         server_settings: Server-Einstellungen
         categories: Kategorien

@@ -48,8 +48,14 @@ module.exports = class extends Listener {
 		if (process.env.PUBLISH_COMMANDS !== 'false') {
 			try {
 				client.log.info('Publishing application commands globally...');
-				await client.commands.publish();
-				const commandData = client.commands.components.map(c => c.toJSON());
+				const commandData = client.commands.components.map(c => {
+					const json = c.toJSON();
+					if (c.type === 1 || !c.type) {
+						json.options = Array.isArray(json.options) ? json.options : [];
+					}
+					return json;
+				});
+				await client.application.commands.set(commandData);
 				let synced = 0;
 				for (const guild of client.guilds.cache.values()) {
 					try {

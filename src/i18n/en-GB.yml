@@ -247,10 +247,10 @@ commands:
       name: settings
       description: View and configure bot settings for this server
       title: "⚙️ Settings • {guild}"
-      description_text: "Overview of all ticket and bot settings for **{guild}**.\nClick the buttons below or links to configure in the web dashboard:\n\n> ⚙️ [Server Settings]({settingsUrl}) • 📂 [Categories]({categoriesUrl}) • 📋 [Panels]({panelsUrl}) • 🏷️ [Tags]({tagsUrl}) • 🌐 [Dashboard]({dashboardUrl})"
+      description_text: "Overview of all ticket and bot settings for **{guild}**.\nUse the dropdown menu to select a category or use the buttons to toggle options directly."
       not_staff:
         title: ❌ Error
-        description: Only staff members and administrators can access the settings dashboard.
+        description: Only staff members and administrators can access settings.
       buttons:
         server_settings: Server Settings
         categories: Categories
