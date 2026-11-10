@@ -274,15 +274,28 @@ commands:
       description: Eine Ticket Eigentümerschaft an ein anderes Mitglied 
         übertragen
     settings:
-      dashboard: Dashboard
-      description: Öffne das Bot-Einstellungen-Dashboard
-      description_text: "Konfiguriere die Einstellungen für **{guild}** im Web-Dashboard:\n\n> 🔗 **Server-Einstellungen:** [{settingsUrl}]({settingsUrl})\n> 🌐 **Dashboard:** [{dashboardUrl}]({dashboardUrl})"
       name: settings
+      description: Zeige und konfiguriere alle Bot-Einstellungen für diesen Server
+      title: "⚙️ Einstellungen • {guild}"
+      description_text: "Übersicht aller Ticket- und Bot-Einstellungen für **{guild}**.\nKlicke auf die Buttons unten oder Links, um Einstellungen im Web-Dashboard zu bearbeiten:\n\n> ⚙️ [Server-Einstellungen]({settingsUrl}) • 📂 [Kategorien]({categoriesUrl}) • 📋 [Panels]({panelsUrl}) • 🏷️ [Tags]({tagsUrl}) • 🌐 [Dashboard]({dashboardUrl})"
       not_staff:
-        description: Nur Teammitglieder und Administratoren können auf das Einstellungen-Dashboard zugreifen.
         title: ❌ Fehler
-      server_settings: Server-Einstellungen
-      title: ⚙️ Bot-Einstellungen
+        description: Nur Teammitglieder und Administratoren können auf das Einstellungen-Dashboard zugreifen.
+      buttons:
+        server_settings: Server-Einstellungen
+        categories: Kategorien
+        panels: Panels
+        tags: Tags
+        dashboard: Dashboard
+      fields:
+        general: 🌐 Allgemein
+        logging: 📢 Kanäle & Protokolle
+        controls: 🔘 Ticket-Steuerung
+        staff_roles: 👥 Team-Rollen
+        categories: 📂 Ticket-Kategorien
+        tags_stats: 🏷️ Tags & Statistiken
+        none_configured: "*Keine konfiguriert (Nur Server-Admins)*"
+        none: "*Keine*"
     tag:
       options:
         for:

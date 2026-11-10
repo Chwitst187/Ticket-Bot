@@ -17,14 +17,17 @@ module.exports = class extends Listener {
 		const client = this.client;
 
 		this.client.log.success(`Added to guild "${guild.name}"`);
-		let settings = await client.prisma.guild.findUnique({ where: { id: guild.id } });
-		if (!settings) {
-			settings = await client.prisma.guild.create({
-				data: {
-					id: guild.id,
-					locale: client.i18n.locales.includes(guild.preferredLocale) ? guild.preferredLocale : 'en-GB',
-				},
-			});
+		const { ensureDefaultCategory } = require('../../lib/tickets/utils');
+		await ensureDefaultCategory(client, guild).catch(err => {
+			client.log.warn(`Could not ensure default category for new guild "${guild.name}": ${err.message}`);
+		});
+
+		try {
+			const commandData = client.commands.components.map(c => c.toJSON());
+			await guild.commands.set(commandData);
+			client.log.info(`Synced commands to new guild "${guild.name}"`);
+		} catch (err) {
+			client.log.warn(`Could not set guild commands for "${guild.name}": ${err.message}`);
 		}
 	}
 };

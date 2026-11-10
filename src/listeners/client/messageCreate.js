@@ -15,6 +15,7 @@ const {
 } = require('../../lib/users');
 const ms = require('ms');
 const emoji = require('node-emoji');
+const { ensureDefaultCategory } = require('../../lib/tickets/utils');
 
 module.exports = class extends Listener {
 	constructor(client, options) {
@@ -31,6 +32,12 @@ module.exports = class extends Listener {
 	 */
 	async useGuild(settings, interaction, topic) {
 		const getMessage = this.client.i18n.getLocale(settings.locale);
+		if (settings.categories.length === 0) {
+			const defaultCat = await ensureDefaultCategory(this.client, interaction.guild);
+			if (defaultCat) {
+				settings.categories = [defaultCat];
+			}
+		}
 		if (settings.categories.length === 0) {
 			interaction.update({
 				components: [],

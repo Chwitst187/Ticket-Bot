@@ -244,15 +244,28 @@ commands:
         description: The ticket channel has been renamed to `{name}`.
         title: Channel renamed
     settings:
-      dashboard: Dashboard
-      description: Open the bot settings dashboard
-      description_text: "Configure settings for **{guild}** in the web dashboard:\n\n> 🔗 **Server Settings:** [{settingsUrl}]({settingsUrl})\n> 🌐 **Dashboard:** [{dashboardUrl}]({dashboardUrl})"
       name: settings
+      description: View and configure bot settings for this server
+      title: "⚙️ Settings • {guild}"
+      description_text: "Overview of all ticket and bot settings for **{guild}**.\nClick the buttons below or links to configure in the web dashboard:\n\n> ⚙️ [Server Settings]({settingsUrl}) • 📂 [Categories]({categoriesUrl}) • 📋 [Panels]({panelsUrl}) • 🏷️ [Tags]({tagsUrl}) • 🌐 [Dashboard]({dashboardUrl})"
       not_staff:
-        description: Only staff members and administrators can access the settings dashboard.
         title: ❌ Error
-      server_settings: Server Settings
-      title: ⚙️ Bot Settings
+        description: Only staff members and administrators can access the settings dashboard.
+      buttons:
+        server_settings: Server Settings
+        categories: Categories
+        panels: Panels
+        tags: Tags
+        dashboard: Dashboard
+      fields:
+        general: 🌐 General
+        logging: 📢 Logging & Channels
+        controls: 🔘 Ticket Controls
+        staff_roles: 👥 Staff Roles
+        categories: 📂 Categories
+        tags_stats: 🏷️ Tags & Statistics
+        none_configured: "*None configured (Manage Server only)*"
+        none: "*None*"
     tag:
       description: Use a tag
       name: tag

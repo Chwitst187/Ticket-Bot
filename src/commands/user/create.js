@@ -12,6 +12,7 @@ const {
 	MessageFlags,
 } = require('discord.js');
 const emoji = require('node-emoji');
+const { ensureDefaultCategory } = require('../../lib/tickets/utils');
 
 module.exports = class CreateUserCommand extends UserCommand {
 	constructor(client, options) {
@@ -90,6 +91,12 @@ module.exports = class CreateUserCommand extends UserCommand {
 			}
 		};
 
+		if (settings.categories.length === 0) {
+			const defaultCat = await ensureDefaultCategory(client, interaction.guild);
+			if (defaultCat) {
+				settings.categories = [defaultCat];
+			}
+		}
 		if (settings.categories.length === 0) {
 			interaction.editReply({
 				components: [],

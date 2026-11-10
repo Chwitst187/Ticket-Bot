@@ -2,6 +2,16 @@
  * @param {import("client")} client
  */
 module.exports = async client => {
+	// ensure default category for all guilds in cache
+	const { ensureDefaultCategory } = require('./tickets/utils');
+	for (const guild of client.guilds.cache.values()) {
+		try {
+			await ensureDefaultCategory(client, guild);
+		} catch (err) {
+			client.log.warn(`Could not ensure default category for guild "${guild.name}": ${err.message}`);
+		}
+	}
+
 	// load ticket numbers
 	const guilds = await client.prisma.guild.findMany({ select: { id: true } });
 	for (const guild of guilds) {

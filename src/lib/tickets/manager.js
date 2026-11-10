@@ -239,7 +239,7 @@ module.exports = class TicketManager {
 		}
 
 		const discordCategory = guild.channels.cache.get(category.discordCategory);
-		if (discordCategory.children.cache.size === 50) return await sendError('category_full');
+		if (discordCategory && discordCategory.children?.cache?.size === 50) return await sendError('category_full');
 
 		const totalCount = await this.getTotalCount(category.id);
 		if (totalCount >= category.totalLimit) return await sendError('category_full');
@@ -408,7 +408,7 @@ module.exports = class TicketManager {
 		/** @type {import("discord.js").TextChannel} */
 		const channel = await guild.channels.create({
 			name: channelName,
-			parent: category.discordCategory,
+			parent: category.discordCategory || undefined,
 			permissionOverwrites: [
 				{
 					deny: ['ViewChannel'],

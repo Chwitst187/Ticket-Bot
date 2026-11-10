@@ -83,9 +83,11 @@ module.exports = class MoveSlashCommand extends SlashCommand {
 
 		const creator = await interaction.guild.members.fetch(ticket.createdById);
 		const newCategory = await client.prisma.category.findUnique({ where: { id: interaction.options.getInteger('category', true) } });
-		const discordCategory = await interaction.guild.channels.fetch(newCategory.discordCategory);
+		const discordCategory = newCategory.discordCategory
+			? await interaction.guild.channels.fetch(newCategory.discordCategory).catch(() => null)
+			: null;
 
-		if (discordCategory.children.cache.size === 50) {
+		if (discordCategory && discordCategory.children?.cache?.size === 50) {
 			return await interaction.editReply({
 				embeds: [
 					new ExtendedEmbedBuilder({
@@ -142,7 +144,7 @@ module.exports = class MoveSlashCommand extends SlashCommand {
 				await interaction.channel.edit({
 					lockPermissions: false,
 					name: ticket.priority ? getEmoji(ticket.priority) + channelName : channelName,
-					parent: discordCategory,
+					parent: discordCategory?.id || undefined,
 					permissionOverwrites: [
 						{
 							deny: ['ViewChannel'],

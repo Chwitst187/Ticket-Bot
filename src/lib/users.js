@@ -20,7 +20,16 @@ const updateStaffRoles = async guild => {
 	const staffRoles = [
 		...new Set(
 			categories.reduce((acc, c) => {
-				acc.push(...c.staffRoles);
+				const roles = Array.isArray(c.staffRoles)
+					? c.staffRoles
+					: (() => {
+						try {
+							return JSON.parse(c.staffRoles);
+						} catch {
+							return [];
+						}
+					})();
+				acc.push(...roles);
 				return acc;
 			}, []),
 		),
@@ -43,6 +52,8 @@ module.exports.isStaff = async (guild, userId) => {
 	if (client.supers.includes(userId)) return true;
 	try {
 		const guildMember = guild.members.cache.get(userId) || await guild.members.fetch(userId);
+		if (guild.ownerId === userId) return true;
+		if (guildMember.permissions.has(PermissionsBitField.Flags.Administrator)) return true;
 		if (guildMember.permissions.has(PermissionsBitField.Flags.ManageGuild)) return true;
 		const staffRoles = await client.keyv.get(`cache/guild-staff:${guild.id}`) || await updateStaffRoles(guild);
 		return staffRoles.some(r => guildMember.roles.cache.has(r));

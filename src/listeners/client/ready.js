@@ -35,13 +35,6 @@ module.exports = class extends Listener {
 		// fill cache
 		await sync(client);
 
-		if (process.env.PUBLISH_COMMANDS === 'true') {
-			client.log.info('Automatically publishing commands...');
-			client.commands.publish()
-				.then(commands => client.log.success('Published %d commands', commands?.size))
-				.catch(client.log.error);
-		}
-
 		await client.application.fetch();
 		if (process.env.PUBLIC_BOT === 'true' && !client.application.botPublic) {
 			client.log.warn('The `PUBLIC_BOT` environment variable is set to `true`, but the bot is not public.');
@@ -51,6 +44,26 @@ module.exports = class extends Listener {
 
 		// commands are not cached automatically
 		await client.application.commands.fetch();
+
+		if (process.env.PUBLISH_COMMANDS !== 'false') {
+			try {
+				client.log.info('Publishing application commands globally...');
+				await client.commands.publish();
+				const commandData = client.commands.components.map(c => c.toJSON());
+				let synced = 0;
+				for (const guild of client.guilds.cache.values()) {
+					try {
+						await guild.commands.set(commandData);
+						synced++;
+					} catch (err) {
+						client.log.debug(`Could not set guild commands for "${guild.name}": ${err.message}`);
+					}
+				}
+				client.log.success('Published commands globally and synced instantly to %d guilds', synced);
+			} catch (err) {
+				client.log.error('Failed to publish/sync commands:', err);
+			}
+		}
 
 		// presence/activity
 		if (client.config.presence.activities?.length > 0) {
